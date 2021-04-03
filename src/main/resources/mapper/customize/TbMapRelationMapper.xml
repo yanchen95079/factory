@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yc.demo.mapper.TbMapRelationMapper">
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tb_map_relation (config_type, level1, level2,
+        level3, level4, level5,
+        level6, level7, level8,
+        level9, level10, position,
+        create_time, update_time, enable,
+        create_user, update_user)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.configType,jdbcType=VARCHAR}, #{item.level1,jdbcType=VARCHAR}, #{item.level2,jdbcType=VARCHAR},
+            #{item.level3,jdbcType=VARCHAR}, #{item.level4,jdbcType=VARCHAR}, #{item.level5,jdbcType=VARCHAR},
+            #{item.level6,jdbcType=VARCHAR}, #{item.level7,jdbcType=VARCHAR}, #{item.level8,jdbcType=VARCHAR},
+            #{item.level9,jdbcType=VARCHAR}, #{item.level10,jdbcType=VARCHAR}, #{item.position,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.enable,jdbcType=INTEGER},
+            #{item.createUser,jdbcType=BIGINT}, #{item.updateUser,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,591 @@
+insert  ---作废
+{
+
+  "createUser": "1",
+
+  "info": "{'1':'GK12345','2':'PR12345','3':'SE12345','4':'2020-02-01','5':'','6':'','7':'','8':'','9':'','10':'','11':'','12':'','13':'','14':'','15':'','16':'','17':'','18':'','19':'','20':'','21':'','22':'','23':'','24':'','25':'','26':'','27':'','28':'','29':'','30':'','31':'','32':'','33':'','34':'','35':'','36':'','37':'','38':'','39':'','40':'','41':'','42':'','43':'','44':'','45':'','46':'','47':'','48':'','49':'','50':'','51':'','52':'','53':'','54':'','55':'','56':'','57':'','58':'','59':'','60':'','61':'','62':'','63':'','64':'','65':'','66':'','67':'','68':'','69':'','70':'','71':''}",
+  "modelName": "QF05-221-Blue-CE-Model",
+  "orderNo": "GK12345",
+  "productNo": "PR12345",
+
+  "serialNo": "SE12345",
+
+  "updateUser": "1"
+}
+
+
+使用maven打包-->  java -jar demo.jar --spring.profies.active=preview
+
+
+config 配置表
+
+----------select------------
+curl -X POST "http://localhost:8886/config/select" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"configType\": \"qualityInspectionModel\"}"
+参数
+{
+
+  "configType": "qualityInspectionModel"
+
+}
+返回
+{
+  "status": 200,
+  "msg": "OK",
+  "data": [
+    {
+      "id": "1",
+      "configType": "qualityInspectionModel",
+      "configKey": "modelRefrigeration",
+      "configValue": "Blue-CE-制冷部分",
+      "remark": null,
+      "createTime": null,
+      "updateTime": null,
+      "enable": 1,
+      "createUser": "1",
+      "updateUser": "1"
+    },
+    {
+      "id": "2",
+      "configType": "qualityInspectionModel",
+      "configKey": "modelWaterTank",
+      "configValue": "Blue-CE-水箱部分",
+      "remark": null,
+      "createTime": null,
+      "updateTime": null,
+      "enable": 1,
+      "createUser": "1",
+      "updateUser": "1"
+    }
+  ]
+}
+
+装配内容
+----------insert-------------
+curl -X POST "http://localhost:8886/assemblyContent/insert" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"configKey\": \"modelRefrigeration\", \"contentName\": \"底盘蒸发器\", \"createUser\": 1, \"position\": 1, \"updateUser\": 1}"
+入参
+{
+  "configKey": "modelRefrigeration",    ---对应config的key
+  "contentName": "底盘蒸发器",
+  "createUser": 1,
+  "position": 1,                         ----排序
+  "updateUser": 1
+}
+出参
+
+Response body
+{
+  "status": 200,
+  "msg": "OK",
+  "data": null
+}
+-----------select--------------
+curl -X POST "http://localhost:8886/assemblyContent/select" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"configKey\": \"modelRefrigeration\", \"id\": 2}"
+入参
+{
+  "configKey": "modelRefrigeration",
+
+  "id": 2
+
+}
+出参
+{
+  "status": 200,
+  "msg": "OK",
+  "data": [
+    {
+      "id": "2",
+      "configKey": "modelRefrigeration",
+      "contentName": "底盘蒸发器",
+      "remark": null,
+      "createTime": "2021-03-05 16:14:19",
+      "updateTime": "2021-03-05 16:14:19",
+      "enable": 1,
+      "position": 1,
+      "createUser": "1",
+      "updateUser": "1"
+    }
+  ]
+}
+
+--------------updateById-------------
+curl -X POST "http://localhost:8886/assemblyContent/update/2" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"contentName\": \"底盘蒸发器\", \"enable\": 1, \"position\": 1, \"updateUser\": 1}"
+入参
+{
+
+  "contentName": "底盘蒸发器",
+
+  "enable": 1,
+
+  "position": 1,
+
+  "updateUser": 1
+}
+出参
+{
+  "status": 200,
+  "msg": "OK",
+  "data": null
+}
+
+
+检测项目表
+
+------------insert-----------
+curl -X POST "http://localhost:8886/testItems/insert" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"assemblyContentId\": 2, \"configKey\": \"modelRefrigeration\", \"createUser\": 1, \"itemsName\": \"确认蒸发器部品来料堵帽\", \"updateUser\": 1, \"valueGt\": 60.0, \"valueLt\": 100.0}"
+入参
+{
+  "assemblyContentId": 2,   装配id
+  "configKey": "modelRefrigeration",
+  "createUser": 1,
+  "itemsName": "确认蒸发器部品来料堵帽",
+  "updateUser": 1,
+  "valueGt": 60.0,   数值是大于 多少  没有传null
+  "valueLt": 100.0   数值是小于 多少  没有传null
+}
+出参
+{
+  "status": 200,
+  "msg": "OK",
+  "data": null
+}
+
+------------select--------------
+curl -X POST "http://localhost:8886/testItems/select" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"configKey\": \"modelRefrigeration\", \"id\": 2 }"
+入参
+{
+
+  "configKey": "modelRefrigeration",
+
+  "id": 2
+
+}
+出参
+
+{
+  "status": 200,
+  "msg": "OK",
+  "data": [
+    {
+      "id": "2",
+      "configKey": "modelRefrigeration",
+      "itemsName": "确认蒸发器部品来料堵帽",
+      "valueLt": null,
+      "valueGt": null,
+      "remark": null,
+      "createTime": "2021-03-05 16:36:29",
+      "updateTime": "2021-03-05 16:36:29",
+      "enable": 1,
+      "assemblyContentId": "2",
+      "createUser": "1",
+      "updateUser": "1",
+      "assemblyContentName": "底盘蒸发器"
+    }
+  ]
+}
+------------updateById------------
+curl -X POST "http://localhost:8886/testItems/update/2" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"assemblyContentId\": 2, \"enable\": 1, \"itemsName\": \"确认蒸发器部品来料堵帽\", \"updateUser\": 1, \"valueGt\": null, \"valueLt\": null}"
+入参
+{
+  "assemblyContentId": 2,
+  "enable": 1,
+  "itemsName": "确认蒸发器部品来料堵帽",
+  "updateUser": 1,
+  "valueGt": null,
+  "valueLt": null
+}
+出参
+{
+  "status": 200,
+  "msg": "OK",
+  "data": null
+}
+
+
+检查单接口
+
+
+---------------insert------------
+curl -X POST "http://localhost:8886/checkInfo/insert" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"configKey\": \"modelRefrigeration\", \"createUser\": 1, \"orderNo\": \"ORDERCESHI1\", \"productNo\": \"PRODUCTNOCESHI1\", \"serialNo\": \"serialnoceshi1\", \"updateUser\": 1}"
+入参
+{
+  "configKey": "modelRefrigeration",
+  "createUser": 1,
+  "orderNo": "ORDERCESHI1",   工单
+  "productNo": "PRODUCTNOCESHI1", 成品
+  "serialNo": "serialnoceshi1", 序号
+  "updateUser": 1
+}
+出参
+{
+  "status": 200,
+  "msg": "OK",
+  "data": null
+}
+
+
+-------------------select----------------
+curl -X POST "http://localhost:8886/checkInfo/selectInfoALL" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"configKey\": \"modelRefrigeration\", \"orderNo\": \"ORDERCESHI1\", \"productNo\": \"PRODUCTNOCESHI1\", \"serialNo\": \"serialnoceshi1\"}"
+入参
+{
+  "configKey": "modelRefrigeration",
+
+  "orderNo": "ORDERCESHI1",
+  "productNo": "PRODUCTNOCESHI1",
+
+  "serialNo": "serialnoceshi1"
+
+}
+出参
+{
+  "status": 200,
+  "msg": "OK",
+  "data": {
+    "id": "9",
+    "orderNo": "ORDERCESHI1",
+    "productNo": "PRODUCTNOCESHI1",
+    "serialNo": "serialnoceshi1",
+    "createTime": "2021-03-05 18:02:10",
+    "tbAssemblyContentList": [
+      {
+        "id": "2",
+        "configKey": "modelRefrigeration",
+        "contentName": "底盘蒸发器",
+        "remark": null,
+        "createTime": "2021-03-05 16:14:19",
+        "updateTime": "2021-03-05 16:23:29",
+        "enable": 1,
+        "position": 1,
+        "createUser": "1",
+        "updateUser": "1",
+        "editFlat": true,
+        "testItemsList": [
+          {
+            "id": "2",
+            "configKey": "modelRefrigeration",
+            "itemsName": "确认蒸发器部品来料堵帽",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": "2021-03-05 16:36:29",
+            "updateTime": "2021-03-05 16:36:29",
+            "enable": 1,
+            "assemblyContentId": "2",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "13",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "2",
+              "checkInfoId": "9"
+            }
+          },
+          {
+            "id": "3",
+            "configKey": "modelRefrigeration",
+            "itemsName": "冰控探针安装位置是否正确",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": null,
+            "updateTime": null,
+            "enable": 1,
+            "assemblyContentId": "2",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "14",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "3",
+              "checkInfoId": "9"
+            }
+          },
+          {
+            "id": "4",
+            "configKey": "modelRefrigeration",
+            "itemsName": "地盘蒸发器支架螺丝紧固,蒸发器形状端正,蒸发器无变形",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": null,
+            "updateTime": null,
+            "enable": 1,
+            "assemblyContentId": "2",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "15",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "4",
+              "checkInfoId": "9"
+            }
+          },
+          {
+            "id": "5",
+            "configKey": "modelRefrigeration",
+            "itemsName": "检查站,检查上道工序巡检卡已签字,检查上序工作内容",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": null,
+            "updateTime": null,
+            "enable": 1,
+            "assemblyContentId": "3",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "16",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "5",
+              "checkInfoId": "9"
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "configKey": "modelRefrigeration",
+        "contentName": "搅拌马达及压缩机",
+        "remark": null,
+        "createTime": "2021-03-05 16:14:19",
+        "updateTime": "2021-03-05 16:14:19",
+        "enable": 1,
+        "position": 2,
+        "createUser": "1",
+        "updateUser": "1",
+        "editFlat": false,
+        "testItemsList": [
+          {
+            "id": "2",
+            "configKey": "modelRefrigeration",
+            "itemsName": "确认蒸发器部品来料堵帽",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": "2021-03-05 16:36:29",
+            "updateTime": "2021-03-05 16:36:29",
+            "enable": 1,
+            "assemblyContentId": "2",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "13",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "2",
+              "checkInfoId": "9"
+            }
+          },
+          {
+            "id": "3",
+            "configKey": "modelRefrigeration",
+            "itemsName": "冰控探针安装位置是否正确",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": null,
+            "updateTime": null,
+            "enable": 1,
+            "assemblyContentId": "2",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "14",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "3",
+              "checkInfoId": "9"
+            }
+          },
+          {
+            "id": "4",
+            "configKey": "modelRefrigeration",
+            "itemsName": "地盘蒸发器支架螺丝紧固,蒸发器形状端正,蒸发器无变形",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": null,
+            "updateTime": null,
+            "enable": 1,
+            "assemblyContentId": "2",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "15",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "4",
+              "checkInfoId": "9"
+            }
+          },
+          {
+            "id": "5",
+            "configKey": "modelRefrigeration",
+            "itemsName": "检查站,检查上道工序巡检卡已签字,检查上序工作内容",
+            "valueLt": null,
+            "valueGt": null,
+            "remark": null,
+            "createTime": null,
+            "updateTime": null,
+            "enable": 1,
+            "assemblyContentId": "3",
+            "createUser": "1",
+            "updateUser": "1",
+            "tbCheckInfoDetail": {
+              "id": "16",
+              "orderNo": "ORDERCESHI1",
+              "productNo": "PRODUCTNOCESHI1",
+              "serialNo": "serialnoceshi1",
+              "remark": null,
+              "createTime": "2021-03-05 18:02:10",
+              "updateTime": "2021-03-05 18:02:10",
+              "createUser": "1",
+              "updateUser": "1",
+              "enable": 1,
+              "checkValue": null,
+              "configKey": "modelRefrigeration",
+              "checkResult": null,
+              "testItemsId": "5",
+              "checkInfoId": "9"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+
+--------------批量更改检测单详情(操作人,检测数值,操作结果)-------------
+curl -X POST "http://localhost:8886/checkInfo/batchUpdateDetail" -H "accept: */*" -H "Content-Type: application/json" -d "[ { \"checkResult\": 1, \"checkValue\": null, \"id\": 13, \"remark\": \"合格\" }, { \"checkResult\": 1, \"checkValue\": null, \"id\": 14, \"remark\": \"合格\" }]"
+入参
+[
+  {
+
+    "checkResult": 1,
+    "checkValue": null,
+
+    "id": 13,       -------这个id为 tbCheckInfoDetail下的id
+
+    "remark": "合格"
+
+
+  },
+  {
+
+    "checkResult": 1,
+    "checkValue": null,
+
+    "id": 14,
+
+    "remark": "合格"
+
+
+  }
+]
+
+出参
+
+{
+  "status": 200,
+  "msg": "OK",
+  "data": null
+}
+
+--------------------
+com.yc.demo.service.impl.TbTestItemsServiceImpl.insert 冗余代码
+       //查看订单详情是否有和这种key相同的 如果有记录 则需要给每个详情都添加一条这样的记录
+//        TbCheckInfo tbCheckInfo=new TbCheckInfo();
+//        tbCheckInfo.setConfigKey(tbTestItems.getConfigKey());
+//        List<TbCheckInfo> select = tbCheckInfoService.select(tbCheckInfo);
+//        if(!CollectionUtils.isEmpty(select)){
+//            List<TbCheckInfoDetail> list=new ArrayList<>();
+//            for (TbCheckInfo checkInfo : select) {
+//                TbCheckInfoDetail detail=new TbCheckInfoDetail();
+//                detail.setConfigKey(tbCheckInfo.getConfigKey());
+//                detail.setCheckInfoId(checkInfo.getId());
+//                detail.setTestItemsId(tbTestItems.getId());
+//                detail.setCreateTime(currentDate);
+//                detail.setUpdateTime(currentDate);
+//                detail.setOrderNo(checkInfo.getOrderNo());
+//                detail.setProductNo(checkInfo.getProductNo());
+//                detail.setSerialNo(checkInfo.getSerialNo());
+//                detail.setCreateUser(tbTestItems.getCreateUser());
+//                detail.setUpdateUser(tbTestItems.getUpdateUser());
+//                detail.setEnable(1);
+//                list.add(detail);
+//            }
+//            tbCheckInfoService.batchInsertDetail(list);
+//        }
