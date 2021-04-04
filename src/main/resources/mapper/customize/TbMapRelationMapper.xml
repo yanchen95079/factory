@@ -15,7 +15,7 @@
             #{item.level3,jdbcType=VARCHAR}, #{item.level4,jdbcType=VARCHAR}, #{item.level5,jdbcType=VARCHAR},
             #{item.level6,jdbcType=VARCHAR}, #{item.level7,jdbcType=VARCHAR}, #{item.level8,jdbcType=VARCHAR},
             #{item.level9,jdbcType=VARCHAR}, #{item.level10,jdbcType=VARCHAR}, #{item.position,jdbcType=INTEGER},
-            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.enable,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP},1,
             #{item.createUser,jdbcType=BIGINT}, #{item.updateUser,jdbcType=BIGINT})
         </foreach>
     </insert>

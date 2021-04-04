@@ -20,11 +20,11 @@ public interface TbTestItemsService {
     List<TestItemsForm> selectAll(TestItemsForm tbTestItems);
 
 
-    TbTestItems insert(TestItemsForm tbTestItems);
+    TestItemsForm insert(TestItemsForm tbTestItems);
 
-    TbTestItems insert(TbTestItems tbTestItems, List<TbMapRelation> tbMapRelationList);
+    TestItemsForm insert(TbTestItems tbTestItems, List<TbMapRelation> tbMapRelationList);
 
-    TbTestItems updateById(TestItemsForm testItemsForm);
+    TestItemsForm updateById(TestItemsForm testItemsForm);
 
     void deleteById(Long id);
 }

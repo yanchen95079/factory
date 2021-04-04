@@ -116,20 +116,20 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
 
     }
     @Override
-    public TbTestItems insert(TestItemsForm tbTestItems) {
+    public TestItemsForm insert(TestItemsForm testItemsForm) {
         Date currentDate = DateUtil.getCurrentDate();
         //添加检测项目
-        tbTestItems.setCreateTime(currentDate);
-        tbTestItems.setUpdateTime(currentDate);
-        tbTestItemsMapper.insertSelective(tbTestItems);
-        if(tbTestItems.getItemType()!=0){
+        testItemsForm.setCreateTime(currentDate);
+        testItemsForm.setUpdateTime(currentDate);
+        tbTestItemsMapper.insertSelective(testItemsForm);
+        if(testItemsForm.getItemType()!=0){
             List<TbMapRelation> list=new ArrayList<>();
-            for (ItemEnumPoJo itemEnumPoJo : tbTestItems.getItemEnumPoJoList()) {
+            for (ItemEnumPoJo itemEnumPoJo : testItemsForm.getItemEnumPoJoList()) {
                 TbMapRelation mapRelation=new TbMapRelation();
                 mapRelation.setConfigType(CommonConstant.TEST_ITEM_ENUM);
-                mapRelation.setLevel1(tbTestItems.getConfigKey());
-                mapRelation.setLevel2(String.valueOf(tbTestItems.getId()));
-                mapRelation.setLevel3(String.valueOf(tbTestItems.getItemType()));
+                mapRelation.setLevel1(testItemsForm.getConfigKey());
+                mapRelation.setLevel2(String.valueOf(testItemsForm.getId()));
+                mapRelation.setLevel3(String.valueOf(testItemsForm.getItemType()));
                 mapRelation.setLevel4(itemEnumPoJo.getEnumKey());
                 mapRelation.setLevel5(itemEnumPoJo.getEnumValue());
                 mapRelation.setLevel6(itemEnumPoJo.getEnumValue());
@@ -140,18 +140,35 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
             }
             tbMapRelationService.batchInsert(list);
         }
-        return tbTestItems;
+        //返显
+        //将枚举填入
+        Map<String,String> mapParam=new HashMap<>(2);
+        if(testItemsForm.getItemType()==0){
+            mapParam.put(CommonConstant.CONFIG_KEY,CommonConstant.DEFAULT);
+        }else {
+            mapParam.put(CommonConstant.TEST_ITEM_ID,String.valueOf(testItemsForm.getId()));
+        }
+        try {
+            List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam, Map.class);
+            testItemsForm.setEnumList(sourceProjectRelationList);
+        }catch (MyException e){
+            throw e;
+        }catch (Exception e){
+            log.error("sourceProjectRelation翻译枚举失败",e);
+        }
+        return testItemsForm;
     }
 
     @Override
-    public TbTestItems insert(TbTestItems tbTestItems, List<TbMapRelation> tbMapRelationList) {
+    public TestItemsForm insert(TbTestItems tbTestItems, List<TbMapRelation> tbMapRelationList) {
         Date currentDate = DateUtil.getCurrentDate();
         //添加检测项目
         tbTestItems.setCreateTime(currentDate);
         tbTestItems.setUpdateTime(currentDate);
         tbTestItemsMapper.insertSelective(tbTestItems);
+        TestItemsForm testItemsForm = convert.tbTestItemsToForm(tbTestItems);
         if(CollectionUtils.isEmpty(tbMapRelationList)){
-            return tbTestItems;
+            return testItemsForm;
         }
         tbMapRelationList.forEach(x->{
             x.setLevel2(String.valueOf(tbTestItems.getId()));
@@ -159,11 +176,12 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
             x.setLevel3(String.valueOf(tbTestItems.getItemType()));
         });
         tbMapRelationService.batchInsert(tbMapRelationList);
-        return tbTestItems;
+        //TODO 没有翻译枚举  需要时候再添加
+        return testItemsForm;
     }
 
     @Override
-    public TbTestItems updateById(TestItemsForm testItemsForm) {
+    public TestItemsForm updateById(TestItemsForm testItemsForm) {
         Date currentDate = DateUtil.getCurrentDate();
         testItemsForm.setUpdateTime(currentDate);
         tbTestItemsMapper.updateByPrimaryKeySelective(testItemsForm);
@@ -192,6 +210,22 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
             updateMap.setLevel2(String.valueOf(testItemsForm.getId()));
             tbMapRelationService.delAndBatchInsert(updateMap,list);
 
+        }
+        //返显
+        //将枚举填入
+        Map<String,String> mapParam=new HashMap<>(2);
+        if(testItemsForm.getItemType()==0){
+            mapParam.put(CommonConstant.CONFIG_KEY,CommonConstant.DEFAULT);
+        }else {
+            mapParam.put(CommonConstant.TEST_ITEM_ID,String.valueOf(testItemsForm.getId()));
+        }
+        try {
+            List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam, Map.class);
+            testItemsForm.setEnumList(sourceProjectRelationList);
+        }catch (MyException e){
+            throw e;
+        }catch (Exception e){
+            log.error("updateId,sourceProjectRelation翻译枚举失败",e);
         }
         return testItemsForm;
     }

@@ -134,13 +134,26 @@ curl -X POST "http://localhost:8886/assemblyContent/update/2" -H "accept: */*" -
 curl -X POST "http://localhost:8886/testItems/insert" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"assemblyContentId\": 2, \"configKey\": \"modelRefrigeration\", \"createUser\": 1, \"itemsName\": \"确认蒸发器部品来料堵帽\", \"updateUser\": 1, \"valueGt\": 60.0, \"valueLt\": 100.0}"
 入参
 {
-  "assemblyContentId": 2,   装配id
+  "assemblyContentId": 2,
   "configKey": "modelRefrigeration",
   "createUser": 1,
-  "itemsName": "确认蒸发器部品来料堵帽",
+  "itemsName": "闫晨测试",
   "updateUser": 1,
-  "valueGt": 60.0,   数值是大于 多少  没有传null
-  "valueLt": 100.0   数值是小于 多少  没有传null
+   "itemEnumPoJoList": [
+      {
+        "enumFlag": "",
+        "enumKey": "1.1",
+        "enumValue": "大于等于",
+        "position": 0
+      },
+      {
+              "enumFlag": "",
+              "enumKey": "1.2",
+              "enumValue": "小于等于",
+              "position": 1
+            }
+    ],
+    "itemType": 1
 }
 出参
 {
