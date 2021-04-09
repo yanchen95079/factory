@@ -1,5 +1,7 @@
 package com.yc.demo.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yc.demo.commom.constants.CommonConstant;
 import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.commom.mapstruct.convert.Convert;
@@ -43,6 +45,39 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
     private Convert convert;
     @Autowired
     private TbConfigService tbConfigService;
+
+    @Override
+    public  PageInfo<CheckInfoSelectPage> checkInfoSelectPage(CheckInfoSelectPage checkInfoSelectPage) {
+        TbCheckInfoExample example = new TbCheckInfoExample();
+        TbCheckInfoExample.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNotEmpty(checkInfoSelectPage.getConfigKey())) {
+            criteria.andConfigKeyEqualTo(checkInfoSelectPage.getConfigKey());
+        }
+        if (checkInfoSelectPage.getState()!=null) {
+            criteria.andStateEqualTo(checkInfoSelectPage.getState());
+        }
+        if (StringUtils.isNotEmpty(checkInfoSelectPage.getOrderNoLike())) {
+            criteria.andOrderNoLike(checkInfoSelectPage.getOrderNoLike()+"%");
+        }
+        if (StringUtils.isNotEmpty(checkInfoSelectPage.getProductNoLike())) {
+            criteria.andProductNoLike(checkInfoSelectPage.getProductNoLike()+"%");
+        }
+        if (StringUtils.isNotEmpty(checkInfoSelectPage.getSerialNoLike())) {
+            criteria.andSerialNoLike(checkInfoSelectPage.getSerialNoLike()+"%");
+        }
+        if(checkInfoSelectPage.getCreateTimeStart()!=null && checkInfoSelectPage.getCreateTimeEnd()!=null){
+            criteria.andCreateTimeBetween(checkInfoSelectPage.getCreateTimeStart(),checkInfoSelectPage.getCreateTimeEnd());
+        }
+        PageHelper.startPage(checkInfoSelectPage.getOffset(), checkInfoSelectPage.getLimit());
+        List<TbCheckInfo> tbCheckInfos = tbCheckInfoMapper.selectByExample(example);
+        PageInfo<TbCheckInfo> pageInfo = new PageInfo<>(tbCheckInfos);
+        PageInfo<CheckInfoSelectPage> pageInfoCopy = new PageInfo<>();
+        BeanUtils.copyProperties(pageInfo,pageInfoCopy);
+        List<CheckInfoSelectPage> checkInfoSelectPages = convert.tbCheckInfoToPage(tbCheckInfos);
+        pageInfoCopy.setList(checkInfoSelectPages);
+        return pageInfoCopy;
+    }
+
     @Override
     public void insert(TbCheckInfo tbCheckInfo) {
         //校验单子是否存在
@@ -163,15 +198,25 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
     }
 
     @Override
-    public void batchUpdateDetail(List<TbCheckInfoDetail> list) {
+    public void batchUpdateDetail(List<TbCheckInfoDetail> list,int infoState) {
         //前端已经判断了数值是否正确,所以我们不需要再去判断了 只拿到正确不正确即可
         Date currentDate = DateUtil.getCurrentDate();
         list.forEach(x->x.setUpdateTime(currentDate));
         tbCheckInfoDetailMapper.batchUpdate(list);
+        if(infoState==1){
+            Set<Long> collect = list.stream().map(TbCheckInfoDetail::getCheckInfoId).collect(Collectors.toSet());
+            for (Long id : collect) {
+                TbCheckInfo record=new TbCheckInfo();
+                record.setId(id);
+                record.setState(infoState);
+                tbCheckInfoMapper.updateByPrimaryKeySelective(record);
+            }
+        }
     }
 
     @Override
-    public CheckInfoAll selectInfoALL(TbCheckInfo tbCheckInfo) {
+    public CheckInfoAll selectInfoALL(TbCheckInfo tbCheckInfo,Integer samplingFlag) {
+        //TODO  ismust需要加入判断逻辑 如果选择0 为显示抽样  那么需要加入抽样的装配内容
         //拿到用户数据
         Map<Long, String> user = tbUserService.selectAllUserName();
         CheckInfoAll result=new CheckInfoAll();
@@ -234,8 +279,20 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
             if(flag){
                 //如果不是所有的都有成功结果,那么就是这一项为可编辑项目
                 if(!CollectionUtils.isEmpty(testItemsExes)&&!testItemsExes.stream().allMatch(x -> x.getTbCheckInfoDetail().getCheckResult()!=null && x.getTbCheckInfoDetail().getCheckResult()==1)){
-                    assemblyContentEx.setEditFlat(true);
-                    flag=false;
+                    //如果外面选择只为基础
+                    if(samplingFlag==null || samplingFlag==1){
+                        //判断数据库如果为抽检 那么为false
+                        if(assemblyContentEx.getSamplingFlag()!=null&&assemblyContentEx.getSamplingFlag()==0){
+                            assemblyContentEx.setEditFlat(false);
+                        }else {
+                            assemblyContentEx.setEditFlat(true);
+                            flag=false;
+                        }
+                    }else {
+                        //如果外面选择可以为抽检  那么就不判断数据库抽检状态
+                        assemblyContentEx.setEditFlat(true);
+                        flag=false;
+                    }
                 }
             }
         }

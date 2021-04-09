@@ -3,8 +3,10 @@ package com.yc.demo.commom.mapstruct.convert;
 
 
 import com.yc.demo.domain.TbAssemblyContent;
+import com.yc.demo.domain.TbCheckInfo;
 import com.yc.demo.domain.TbTestItems;
 import com.yc.demo.domain.ex.AssemblyContentEx;
+import com.yc.demo.domain.ex.CheckInfoSelectPage;
 import com.yc.demo.domain.ex.TestItemsEx;
 import com.yc.demo.domain.ex.TestItemsForm;
 import org.mapstruct.Mapper;
@@ -43,5 +45,10 @@ public interface Convert {
     TestItemsForm tbTestItemsToForm(TbTestItems vo);
 
     List<TestItemsForm> tbTestItemsToForm(List<TbTestItems> list);
+
+    @Mappings({})
+    CheckInfoSelectPage  tbCheckInfoToPage(TbCheckInfo info);
+
+    List<CheckInfoSelectPage>  tbCheckInfoToPage(List<TbCheckInfo> list);
 
 }

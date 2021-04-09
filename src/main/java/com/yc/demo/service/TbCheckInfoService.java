@@ -1,8 +1,10 @@
 package com.yc.demo.service;
 
+import com.github.pagehelper.PageInfo;
 import com.yc.demo.domain.TbCheckInfo;
 import com.yc.demo.domain.TbCheckInfoDetail;
 import com.yc.demo.domain.ex.CheckInfoAll;
+import com.yc.demo.domain.ex.CheckInfoSelectPage;
 
 import java.util.List;
 
@@ -13,6 +15,12 @@ import java.util.List;
  * @Description：
  */
 public interface TbCheckInfoService {
+    /**
+     * 分页查询
+     * @param checkInfoSelectPage
+     * @return
+     */
+    PageInfo<CheckInfoSelectPage> checkInfoSelectPage(CheckInfoSelectPage checkInfoSelectPage);
 
     void insert(TbCheckInfo tbCheckInfo);
 
@@ -22,14 +30,20 @@ public interface TbCheckInfoService {
 
     void batchInsertDetail(List<TbCheckInfoDetail> list);
 
-    void batchUpdateDetail(List<TbCheckInfoDetail> list);
+    /**
+     *
+     * @param list
+     * @param infoState 0未完成 1说明整体已经完成 需要修改总表checkInfo的state状态
+     */
+    void batchUpdateDetail(List<TbCheckInfoDetail> list,int infoState);
 
     /**
      *
      * @param tbCheckInfo
+     * @param samplingFlag 1基础 0抽样
      * @return
      */
-    CheckInfoAll selectInfoALL(TbCheckInfo tbCheckInfo);
+    CheckInfoAll selectInfoALL(TbCheckInfo tbCheckInfo,Integer samplingFlag);
 
     void copyCheck(String sourceConfigKey,String configKey);
 }
