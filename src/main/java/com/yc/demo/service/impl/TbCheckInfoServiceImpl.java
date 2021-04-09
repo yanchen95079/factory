@@ -216,7 +216,6 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
 
     @Override
     public CheckInfoAll selectInfoALL(TbCheckInfo tbCheckInfo,Integer samplingFlag) {
-        //TODO  ismust需要加入判断逻辑 如果选择0 为显示抽样  那么需要加入抽样的装配内容
         //拿到用户数据
         Map<Long, String> user = tbUserService.selectAllUserName();
         CheckInfoAll result=new CheckInfoAll();
