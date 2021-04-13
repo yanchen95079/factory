@@ -65,6 +65,9 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if (StringUtils.isNotEmpty(checkInfoSelectPage.getSerialNoLike())) {
             criteria.andSerialNoLike(checkInfoSelectPage.getSerialNoLike()+"%");
         }
+        if (StringUtils.isNotEmpty(checkInfoSelectPage.getUuid())) {
+            criteria.andUuidEqualTo(checkInfoSelectPage.getUuid());
+        }
         if(checkInfoSelectPage.getCreateTimeStart()!=null && checkInfoSelectPage.getCreateTimeEnd()!=null){
             criteria.andCreateTimeBetween(checkInfoSelectPage.getCreateTimeStart(),checkInfoSelectPage.getCreateTimeEnd());
         }
@@ -107,6 +110,7 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
             detail.setCheckInfoId(tbCheckInfo.getId());
             detail.setTestItemsId(testItems.getId());
             detail.setCreateTime(currentDate);
+            detail.setUuid(tbCheckInfo.getUuid());
             detail.setUpdateTime(currentDate);
             detail.setOrderNo(tbCheckInfo.getOrderNo());
             detail.setSerialNo(tbCheckInfo.getSerialNo());
@@ -131,6 +135,9 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if (StringUtils.isNotEmpty(tbCheckInfo.getConfigKey())) {
             criteria.andConfigKeyEqualTo(tbCheckInfo.getConfigKey());
         }
+        if (StringUtils.isNotEmpty(tbCheckInfo.getUuid())) {
+            criteria.andUuidEqualTo(tbCheckInfo.getUuid());
+        }
         if (StringUtils.isNotEmpty(tbCheckInfo.getOrderNo())) {
             criteria.andOrderNoEqualTo(tbCheckInfo.getOrderNo());
         }
@@ -149,6 +156,9 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         TbCheckInfoDetailExample.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotEmpty(tbCheckInfoDetail.getConfigKey())) {
             criteria.andConfigKeyEqualTo(tbCheckInfoDetail.getConfigKey());
+        }
+        if (StringUtils.isNotEmpty(tbCheckInfoDetail.getUuid())) {
+            criteria.andUuidEqualTo(tbCheckInfoDetail.getUuid());
         }
         if (StringUtils.isNotEmpty(tbCheckInfoDetail.getOrderNo())) {
             criteria.andOrderNoEqualTo(tbCheckInfoDetail.getOrderNo());

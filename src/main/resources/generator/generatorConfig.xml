@@ -46,7 +46,7 @@
             <!--&lt;!&ndash; mysql 配置 &ndash;&gt;-->
             <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
         <!--</table>-->
-        <table tableName="tb_assembly_content">
+        <table tableName="tb_check_info_detail">
         <!-- mysql 配置 -->
         <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
 

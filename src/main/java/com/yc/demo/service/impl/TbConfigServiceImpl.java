@@ -31,6 +31,9 @@ public class TbConfigServiceImpl implements TbConfigService {
         if(StringUtils.isNotEmpty(config.getConfigKey())){
             criteria.andConfigKeyEqualTo(config.getConfigKey());
         }
+        if(config.getEnable()!=null){
+            criteria.andEnableEqualTo(config.getEnable());
+        }
         if(StringUtils.isNotEmpty(config.getConfigType())){
             criteria.andConfigTypeEqualTo(config.getConfigType());
         }
