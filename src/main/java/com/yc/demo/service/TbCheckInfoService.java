@@ -46,4 +46,7 @@ public interface TbCheckInfoService {
     CheckInfoAll selectInfoALL(TbCheckInfo tbCheckInfo,Integer samplingFlag);
 
     void copyCheck(String sourceConfigKey,String configKey);
+
+
+    List<String> selectAllConfigKey(TbCheckInfo record);
 }

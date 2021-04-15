@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yc.demo.mapper.TbCheckInfoMapper">
+  <select id="selectAllConfigKey" parameterType="com.yc.demo.domain.TbCheckInfo" resultType="java.lang.String">
+      select distinct config_key as configKey from tb_check_info
+      where 1=1
+    <trim prefix="" suffixOverrides=",">
+    <if test="orderNo != null">
+      and order_no = #{orderNo,jdbcType=VARCHAR},
+    </if>
+    <if test="productNo != null">
+      and product_no = #{productNo,jdbcType=VARCHAR},
+    </if>
+    <if test="serialNo != null">
+      and serial_no = #{serialNo,jdbcType=VARCHAR},
+    </if>
+    <if test="machineNum != null">
+      machine_num = #{machineNum,jdbcType=VARCHAR},
+    </if>
+    </trim>
+  </select>
+</mapper>

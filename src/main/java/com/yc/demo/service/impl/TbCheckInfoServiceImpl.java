@@ -65,8 +65,8 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if (StringUtils.isNotEmpty(checkInfoSelectPage.getSerialNoLike())) {
             criteria.andSerialNoLike(checkInfoSelectPage.getSerialNoLike()+"%");
         }
-        if (StringUtils.isNotEmpty(checkInfoSelectPage.getUuid())) {
-            criteria.andUuidEqualTo(checkInfoSelectPage.getUuid());
+        if (StringUtils.isNotEmpty(checkInfoSelectPage.getMachineNum())) {
+            criteria.andMachineNumEqualTo(checkInfoSelectPage.getMachineNum());
         }
         if(checkInfoSelectPage.getCreateTimeStart()!=null && checkInfoSelectPage.getCreateTimeEnd()!=null){
             criteria.andCreateTimeBetween(checkInfoSelectPage.getCreateTimeStart(),checkInfoSelectPage.getCreateTimeEnd());
@@ -110,7 +110,7 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
             detail.setCheckInfoId(tbCheckInfo.getId());
             detail.setTestItemsId(testItems.getId());
             detail.setCreateTime(currentDate);
-            detail.setUuid(tbCheckInfo.getUuid());
+            detail.setMachineNum(tbCheckInfo.getMachineNum());
             detail.setUpdateTime(currentDate);
             detail.setOrderNo(tbCheckInfo.getOrderNo());
             detail.setSerialNo(tbCheckInfo.getSerialNo());
@@ -135,8 +135,8 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if (StringUtils.isNotEmpty(tbCheckInfo.getConfigKey())) {
             criteria.andConfigKeyEqualTo(tbCheckInfo.getConfigKey());
         }
-        if (StringUtils.isNotEmpty(tbCheckInfo.getUuid())) {
-            criteria.andUuidEqualTo(tbCheckInfo.getUuid());
+        if (StringUtils.isNotEmpty(tbCheckInfo.getMachineNum())) {
+            criteria.andMachineNumEqualTo(tbCheckInfo.getMachineNum());
         }
         if (StringUtils.isNotEmpty(tbCheckInfo.getOrderNo())) {
             criteria.andOrderNoEqualTo(tbCheckInfo.getOrderNo());
@@ -157,8 +157,8 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if (StringUtils.isNotEmpty(tbCheckInfoDetail.getConfigKey())) {
             criteria.andConfigKeyEqualTo(tbCheckInfoDetail.getConfigKey());
         }
-        if (StringUtils.isNotEmpty(tbCheckInfoDetail.getUuid())) {
-            criteria.andUuidEqualTo(tbCheckInfoDetail.getUuid());
+        if (StringUtils.isNotEmpty(tbCheckInfoDetail.getMachineNum())) {
+            criteria.andMachineNumEqualTo(tbCheckInfoDetail.getMachineNum());
         }
         if (StringUtils.isNotEmpty(tbCheckInfoDetail.getOrderNo())) {
             criteria.andOrderNoEqualTo(tbCheckInfoDetail.getOrderNo());
@@ -355,6 +355,11 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
                 }
             }
         }
+    }
+
+    @Override
+    public List<String> selectAllConfigKey(TbCheckInfo record) {
+        return tbCheckInfoMapper.selectAllConfigKey(record);
     }
 
 

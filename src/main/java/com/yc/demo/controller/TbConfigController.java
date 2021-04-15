@@ -2,8 +2,10 @@ package com.yc.demo.controller;
 
 import com.yc.demo.commom.HSResult;
 import com.yc.demo.commom.constants.CommonConstant;
+import com.yc.demo.domain.TbCheckInfo;
 import com.yc.demo.domain.TbConfig;
 import com.yc.demo.domain.TbMapRelation;
+import com.yc.demo.domain.ex.ConfigForm;
 import com.yc.demo.service.TbConfigService;
 import com.yc.demo.service.TbMapRelationService;
 import io.swagger.annotations.Api;
@@ -58,6 +60,13 @@ public class TbConfigController {
         return HSResult.ok();
     }
 
+    @ApiOperation("根据订单有的查询config")
+    @RequestMapping(value = "selectAllConfigKey", method = RequestMethod.POST)
+    public HSResult selectAllConfigKey(
+            @RequestBody ConfigForm configForm
+    ) throws Exception {
+        return new HSResult(tbConfigService.selectAllConfigKey(configForm));
 
+    }
 
 }
