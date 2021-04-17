@@ -132,7 +132,7 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
                 mapRelation.setLevel3(String.valueOf(testItemsForm.getItemType()));
                 mapRelation.setLevel4(itemEnumPoJo.getEnumKey());
                 mapRelation.setLevel5(itemEnumPoJo.getEnumValue());
-                mapRelation.setLevel6(itemEnumPoJo.getEnumValue());
+                mapRelation.setLevel6(itemEnumPoJo.getEnumFlag());
                 mapRelation.setPosition(itemEnumPoJo.getPosition()==null?0:itemEnumPoJo.getPosition());
                 mapRelation.setCreateTime(currentDate);
                 mapRelation.setUpdateTime(currentDate);
