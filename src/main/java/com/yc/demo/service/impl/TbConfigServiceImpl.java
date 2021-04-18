@@ -10,6 +10,7 @@ import com.yc.demo.service.TbConfigService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -67,6 +68,9 @@ public class TbConfigServiceImpl implements TbConfigService {
         tbCheckInfo.setSerialNo(configForm.getSerialNo());
         tbCheckInfo.setProductNo(configForm.getProductNo());
         List<String> strings = tbCheckInfoService.selectAllConfigKey(tbCheckInfo);
+        if(CollectionUtils.isEmpty(strings)){
+            return null;
+        }
         List<TbConfig> select = this.select(configForm);
         return select.stream().filter(x->strings.contains(x.getConfigKey())).collect(Collectors.toList());
     }
