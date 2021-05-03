@@ -406,8 +406,10 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
                 if(testItemsEx.getTbCheckInfoDetail()!=null){
                     checkInfoExcel.setCheckValueName(testItemsEx.getTbCheckInfoDetail().getCheckValueName());
                     checkInfoExcel.setCheckResultName(testItemsEx.getTbCheckInfoDetail().getCheckResultName());
-                    checkInfoExcel.setWorkTime(testItemsEx.getTbCheckInfoDetail().getUpdateTime());
-                    checkInfoExcel.setWorkUser(testItemsEx.getTbCheckInfoDetail().getUpdateUserName());
+                    if(StringUtils.isNotEmpty(checkInfoExcel.getCheckResultName())){
+                        checkInfoExcel.setWorkTime(testItemsEx.getTbCheckInfoDetail().getUpdateTime());
+                        checkInfoExcel.setWorkUser(testItemsEx.getTbCheckInfoDetail().getUpdateUserName());
+                    }
                     checkInfoExcel.setRemark(testItemsEx.getTbCheckInfoDetail().getRemark());
                 }
                 list.add(checkInfoExcel);
