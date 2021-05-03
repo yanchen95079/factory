@@ -20,9 +20,9 @@ public interface TbMapRelationService {
 
     List<TbMapRelation> select(TbMapRelationForm tbMapRelation);
 
-    List<String> getMapLikeRelation(String configType, Map<String,String> condition, Map<String,String> likeCondition)throws Exception ;
+    List<String> getMapLikeRelation(String configType, Map<String,String> condition, Map<String,String> likeCondition,Map<String,String> inCondition)throws Exception ;
 
-    public <T> List<T> getMapRelation(String configType, Map<String, String> condition, Class<T> clazz) throws Exception ;
+    public <T> List<T> getMapRelation(String configType, Map<String,String> condition, Map<String,String> likeCondition,Map<String,String> inCondition,Class<T> clazz) throws Exception ;
 
 }
 

@@ -32,7 +32,7 @@ public class PdfUtils {
     private final static Logger log = LoggerFactory.getLogger(PdfUtils.class);
     private static long size=1024;
     private static long mb=2;
-    // 利用模板生成pdf
+    // 利用模板生成pdf        PdfUtils.pdfout(JSON.parseObject(pdfInfoById.getInfo(),Map.class),pdfInfoById.getOrderNo(),pdfInfoById.getModelName());
     public static void pdfout(Map<String, Object> dateMap,String orderNo,String modelName) {
         //检测剩余空间
         File fileFree = new File("D:");

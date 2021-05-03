@@ -33,9 +33,17 @@ public class CheckInfoAll{
      */
     private String serialNo;
     /**
+     * machine_num
+     */
+    private String machineNum;
+    /**
      * 检查单创建时间
      */
     private Date createTime;
+    /**
+     * 检查单创建时间
+     */
+    private String configValue;
     /**
      * 装配内容List
      */

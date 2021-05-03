@@ -9,13 +9,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -24,14 +21,14 @@ import java.util.List;
  * @Date 2021/3/5 15:27
  * @Description：
  */
-@RestController
+@Controller
 @Api(tags = "各种检测表数据控制层")
 @RequestMapping(value = "/checkInfo")
 public class TbCheckInfoController {
     @Autowired
     private TbCheckInfoService tbCheckInfoService;
 
-
+    @ResponseBody
     @ApiOperation("检查单分页查询")
     @RequestMapping(value = "/selectPage", method = RequestMethod.POST)
     public HSResult selectPage(
@@ -43,6 +40,7 @@ public class TbCheckInfoController {
 
 
     @ApiOperation("添加检查单信息")
+    @ResponseBody
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public HSResult insert(
 
@@ -54,6 +52,7 @@ public class TbCheckInfoController {
 
 
     @ApiOperation("根据订单号等信息查看检测单详细信息")
+    @ResponseBody
     @RequestMapping(value = "/selectInfoALL/{samplingFlag}", method = RequestMethod.POST)
     public HSResult selectInfoALL(
             @ApiParam(value = "samplingFlag") @PathVariable(value = "samplingFlag") Integer samplingFlag,
@@ -63,6 +62,7 @@ public class TbCheckInfoController {
     }
 
     @ApiOperation("批量更改检测单详情(操作人,检测数值,操作结果)")
+    @ResponseBody
     @RequestMapping(value = "/batchUpdateDetail/{infoState}", method = RequestMethod.POST)
     public HSResult batchUpdateDetail(
             @ApiParam(value = "infoState") @PathVariable(value = "infoState") int infoState,
@@ -73,6 +73,7 @@ public class TbCheckInfoController {
     }
 
     @ApiOperation("复制")
+    @ResponseBody
     @RequestMapping(value = "/copyCheck", method = RequestMethod.POST)
     public HSResult copyCheck(
             @ApiParam("复制源")@RequestParam String sourceConfigKey, @ApiParam("复制到")@RequestParam String configKey
@@ -81,6 +82,15 @@ public class TbCheckInfoController {
         return HSResult.ok();
     }
 
-
+    @ApiOperation("导出Excel")
+    @ResponseBody
+    @RequestMapping(value = "/outExcel/{samplingFlag}", method = RequestMethod.POST)
+    public void outExcel(
+            @ApiParam(value = "samplingFlag") @PathVariable(value = "samplingFlag") Integer samplingFlag,
+            @RequestBody TbCheckInfo tbCheckInfo,
+            HttpServletResponse response
+    ) throws Exception {
+        tbCheckInfoService.outExcel(tbCheckInfo,samplingFlag,response);
+    }
 
 }

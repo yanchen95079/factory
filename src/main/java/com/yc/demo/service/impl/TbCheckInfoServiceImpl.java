@@ -1,11 +1,15 @@
 package com.yc.demo.service.impl;
 
+import ch.qos.logback.core.util.FileUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yc.demo.commom.constants.CommonConstant;
+import com.yc.demo.commom.enums.DefaultEnum;
+import com.yc.demo.commom.enums.ItemTypeEnum;
 import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.commom.mapstruct.convert.Convert;
 import com.yc.demo.commom.utils.DateUtil;
+import com.yc.demo.commom.utils.ExcelUtils;
 import com.yc.demo.domain.*;
 import com.yc.demo.domain.ex.*;
 import com.yc.demo.mapper.TbCheckInfoDetailMapper;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -234,6 +239,12 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if(CollectionUtils.isEmpty(select)){
             throw new MyException(500,"没有此检查单");
         }
+        TbConfig config=new TbConfig();
+        config.setConfigKey(select.get(0).getConfigKey());
+        config.setConfigType(CommonConstant.QUALITY_INSPECTION_MODEL);
+        List<TbConfig> tbConfigs = tbConfigService.select(config);
+        result.setConfigValue(CollectionUtils.isEmpty(tbConfigs)?null:tbConfigs.get(0).getConfigValue());
+        result.setMachineNum(select.get(0).getMachineNum());
         result.setOrderNo(select.get(0).getOrderNo());
         result.setSerialNo(select.get(0).getSerialNo());
         result.setProductNo(select.get(0).getProductNo());
@@ -261,18 +272,37 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         Map<Long, List<TbCheckInfoDetail>> tbCheckInfoDetailMap = tbCheckInfoDetails.stream().collect(Collectors.groupingBy(TbCheckInfoDetail::getTestItemsId));
         for (TestItemsEx testItemsEx : testItemsExList) {
             List<TbCheckInfoDetail> detailList = tbCheckInfoDetailMap.get(testItemsEx.getId());
+            TbCheckInfoDetailEx tbCheckInfoDetailEx=new TbCheckInfoDetailEx();
             if(CollectionUtils.isEmpty(detailList)){
-                testItemsEx.setTbCheckInfoDetail(new TbCheckInfoDetail());
+                testItemsEx.setTbCheckInfoDetail(tbCheckInfoDetailEx);
             }else {
                 //项目和详情是一对一关系
                 TbCheckInfoDetail detail = detailList.get(0);
-                if(detail.getCreateUser()!=null){
-                    detail.setCreateUserName(user.get(detail.getCreateUser()));
+                BeanUtils.copyProperties(detail,tbCheckInfoDetailEx);
+                if(tbCheckInfoDetailEx.getCreateUser()!=null){
+                    tbCheckInfoDetailEx.setCreateUserName(user.get(tbCheckInfoDetailEx.getCreateUser()));
                 }
-                if(detail.getUpdateUser()!=null){
-                    detail.setUpdateUserName(user.get(detail.getUpdateUser()));
+                if(tbCheckInfoDetailEx.getUpdateUser()!=null){
+                    tbCheckInfoDetailEx.setUpdateUserName(user.get(tbCheckInfoDetailEx.getUpdateUser()));
                 }
-                testItemsEx.setTbCheckInfoDetail(detail);
+                //配置枚举的值
+                tbCheckInfoDetailEx.setCheckResultName(DefaultEnum.getDefaultName(String.valueOf(tbCheckInfoDetailEx.getCheckResult())));
+                if(testItemsEx.getItemType().equals(ItemTypeEnum.ITEM_TYPE_ENUM_1.getCode())){
+                    if(tbCheckInfoDetailEx.getCheckValue()!=null){
+                        tbCheckInfoDetailEx.setCheckValueName(tbCheckInfoDetailEx.getCheckValue().stripTrailingZeros().toPlainString());
+                    }
+                }
+                if(testItemsEx.getItemType().equals(ItemTypeEnum.ITEM_TYPE_ENUM_2.getCode())){
+                    if(testItemsEx.getEnumList()!=null&&tbCheckInfoDetailEx.getCheckValue()!=null){
+                        for (Map map : testItemsEx.getEnumList()) {
+                            if(String.valueOf(tbCheckInfoDetailEx.getCheckValue().stripTrailingZeros().toPlainString()).equals(String.valueOf(map.get(CommonConstant.SELECT_KEY)))){
+                                tbCheckInfoDetailEx.setCheckValueName(String.valueOf(map.get(CommonConstant.SELECT_VALUE)));
+                                break;
+                            }
+                        }
+                    }
+                }
+                testItemsEx.setTbCheckInfoDetail(tbCheckInfoDetailEx);
             }
         }
         //检测内容转map
@@ -360,6 +390,37 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
     @Override
     public List<String> selectAllConfigKey(TbCheckInfo record) {
         return tbCheckInfoMapper.selectAllConfigKey(record);
+    }
+
+    @Override
+    public void outExcel(TbCheckInfo tbCheckInfo, Integer samplingFlag,HttpServletResponse response) {
+        CheckInfoAll checkInfoAll = this.selectInfoALL(tbCheckInfo, samplingFlag);
+        List<CheckInfoExcel> list=new ArrayList<>();
+        for (int i = 1; i <= checkInfoAll.getTbAssemblyContentList().size(); i++) {
+            AssemblyContentEx assemblyContentEx = checkInfoAll.getTbAssemblyContentList().get(i - 1);
+            for (TestItemsEx testItemsEx : assemblyContentEx.getTestItemsList()) {
+                CheckInfoExcel checkInfoExcel=new CheckInfoExcel();
+                checkInfoExcel.setNum(String.valueOf(i));
+                checkInfoExcel.setContentName(assemblyContentEx.getContentName());
+                checkInfoExcel.setItemsName(testItemsEx.getItemsName());
+                if(testItemsEx.getTbCheckInfoDetail()!=null){
+                    checkInfoExcel.setCheckValueName(testItemsEx.getTbCheckInfoDetail().getCheckValueName());
+                    checkInfoExcel.setCheckResultName(testItemsEx.getTbCheckInfoDetail().getCheckResultName());
+                    checkInfoExcel.setWorkTime(testItemsEx.getTbCheckInfoDetail().getUpdateTime());
+                    checkInfoExcel.setWorkUser(testItemsEx.getTbCheckInfoDetail().getUpdateUserName());
+                    checkInfoExcel.setRemark(testItemsEx.getTbCheckInfoDetail().getRemark());
+                }
+                list.add(checkInfoExcel);
+            }
+        }
+
+
+        String secondTitle = ("工单号：" + checkInfoAll.getOrderNo() + "") +
+                " 成品号：" + checkInfoAll.getProductNo() + "" +
+                " 序号：" + checkInfoAll.getSerialNo() + "" +
+                " 创建时间：" + DateUtil.date2String(checkInfoAll.getCreateTime(),DateUtil.DatePattern.YYYYMMDDHHmmss.getValue());
+        ExcelUtils.exportExcel(list,checkInfoAll.getConfigValue(), secondTitle,checkInfoAll.getConfigValue(),CheckInfoExcel.class,"质检单.xls",response);
+
     }
 
 

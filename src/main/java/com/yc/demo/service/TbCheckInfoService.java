@@ -6,6 +6,7 @@ import com.yc.demo.domain.TbCheckInfoDetail;
 import com.yc.demo.domain.ex.CheckInfoAll;
 import com.yc.demo.domain.ex.CheckInfoSelectPage;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -49,4 +50,6 @@ public interface TbCheckInfoService {
 
 
     List<String> selectAllConfigKey(TbCheckInfo record);
+
+    void outExcel(TbCheckInfo tbCheckInfo, Integer samplingFlag,HttpServletResponse response);
 }

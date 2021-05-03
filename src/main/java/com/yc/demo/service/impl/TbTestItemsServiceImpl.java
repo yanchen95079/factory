@@ -1,5 +1,6 @@
 package com.yc.demo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.yc.demo.commom.constants.CommonConstant;
 import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.commom.mapstruct.convert.Convert;
@@ -92,26 +93,31 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
         form.setIds(ids);
         List<TbAssemblyContent> select = tbAssemblyContentService.select(form);
         Map<Long, String> map = select.stream().collect(Collectors.toMap(TbAssemblyContent::getId, TbAssemblyContent::getContentName));
+        try {
+        //获取枚举
+        Map<String,String> mapParam=new HashMap<>(2);
+        List<Long> idList=new ArrayList<>();
+        idList.add(Long.valueOf(CommonConstant.ZERO));
+        List<Long> collect = result.stream().filter(x -> x.getItemType() != 0).map(TestItemsForm::getId).collect(Collectors.toList());
+        if(!CollectionUtils.isEmpty(collect)){
+            idList.addAll(collect);
+        }
+        mapParam.put(CommonConstant.TEST_ITEM_ID, JSON.toJSONString(idList));
+        List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, null,null,mapParam, Map.class);
+        Map<String, List<Map>> enumList = sourceProjectRelationList.stream().collect(Collectors.groupingBy(x->String.valueOf(x.get(CommonConstant.TEST_ITEM_ID))));
         for (TestItemsForm testItemsForm : result) {
             testItemsForm.setAssemblyContentName(map.get(testItemsForm.getId()));
-            //将枚举填入
-            Map<String,String> mapParam=new HashMap<>(2);
             if(testItemsForm.getItemType()==0){
-                mapParam.put(CommonConstant.CONFIG_KEY,CommonConstant.DEFAULT);
+                testItemsForm.setEnumList(enumList.get(CommonConstant.ZERO));
             }else {
-                mapParam.put(CommonConstant.TEST_ITEM_ID,String.valueOf(testItemsForm.getId()));
-            }
-            try {
-                List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam, Map.class);
-                testItemsForm.setEnumList(sourceProjectRelationList);
-            }catch (MyException e){
-                throw e;
-            }catch (Exception e){
-                log.error("sourceProjectRelationList翻译枚举失败",e);
+                testItemsForm.setEnumList(enumList.get(String.valueOf(testItemsForm.getId())));
             }
         }
-
-
+        }catch (MyException e){
+            throw e;
+        }catch (Exception e){
+            log.error("sourceProjectRelationList翻译枚举失败",e);
+        }
         return  result;
 
     }
@@ -149,7 +155,7 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
             mapParam.put(CommonConstant.TEST_ITEM_ID,String.valueOf(testItemsForm.getId()));
         }
         try {
-            List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam, Map.class);
+            List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam,null,null, Map.class);
             testItemsForm.setEnumList(sourceProjectRelationList);
         }catch (MyException e){
             throw e;
@@ -220,7 +226,7 @@ public class TbTestItemsServiceImpl implements TbTestItemsService {
             mapParam.put(CommonConstant.TEST_ITEM_ID,String.valueOf(testItemsForm.getId()));
         }
         try {
-            List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam, Map.class);
+            List<Map> sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.TEST_ITEM_ENUM, mapParam,null,null, Map.class);
             testItemsForm.setEnumList(sourceProjectRelationList);
         }catch (MyException e){
             throw e;

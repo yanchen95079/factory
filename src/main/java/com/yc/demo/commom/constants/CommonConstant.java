@@ -9,6 +9,9 @@ package com.yc.demo.commom.constants;
 public class CommonConstant {
     public static String QUALITY_INSPECTION_MODEL="qualityInspectionModel";
     public static String DEFAULT="default";
+    public static String ZERO="0";
+    public static String SELECT_KEY="selectKey";
+    public static String SELECT_VALUE="selectValue";
     public static String TEST_ITEM_ENUM="testItemEnum";
     public static String CONFIG_KEY="configKey";
     public static String TEST_ITEM_ID="testItemId";

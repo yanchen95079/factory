@@ -20,7 +20,7 @@ public class TestItemsEx extends TbTestItems {
     /**
      * 每个项目的结果
      */
-    TbCheckInfoDetail tbCheckInfoDetail;
+    TbCheckInfoDetailEx tbCheckInfoDetail;
     /**
      * 此题目的枚举
      */

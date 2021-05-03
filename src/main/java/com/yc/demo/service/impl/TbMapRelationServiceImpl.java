@@ -7,7 +7,6 @@ import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.domain.TbConfig;
 import com.yc.demo.domain.TbMapRelation;
 import com.yc.demo.domain.TbMapRelationExample;
-import com.yc.demo.domain.ex.MapRelationQueryParam;
 import com.yc.demo.domain.ex.TbMapRelationForm;
 import com.yc.demo.mapper.TbMapRelationMapper;
 import com.yc.demo.service.TbConfigService;
@@ -84,6 +83,9 @@ public class TbMapRelationServiceImpl implements TbMapRelationService {
         if(StringUtils.isNotEmpty(tbMapRelation.getLevel3())){
             criteria.andLevel3EqualTo(tbMapRelation.getLevel3());
         }
+        if(StringUtils.isNotEmpty(tbMapRelation.getLevel2in())){
+            criteria.andLevel2In(JSON.parseArray(tbMapRelation.getLevel2in(),String.class));
+        }
         if(StringUtils.isNotEmpty(tbMapRelation.getOrderBy())){
             example.setOrderByClause(tbMapRelation.getOrderBy());
         }
@@ -91,7 +93,7 @@ public class TbMapRelationServiceImpl implements TbMapRelationService {
     }
 
     @Override
-    public  List<String> getMapLikeRelation(String configType, Map<String,String> condition, Map<String,String> likeCondition) throws Exception {
+    public  List<String> getMapLikeRelation(String configType, Map<String,String> condition, Map<String,String> likeCondition,Map<String,String> inCondition) throws Exception {
         TbConfig metaParam = new TbConfig();
         metaParam.setConfigType(configType);
         List<TbConfig> metaConfigList = tbConfigService.select(metaParam);
@@ -124,7 +126,7 @@ public class TbMapRelationServiceImpl implements TbMapRelationService {
                     if (StringUtils.isNotBlank(level)) {
                         //按照传进来的参数，参照元数据类型，放到对应的位置上
                         try {
-                            Field f = MapRelationQueryParam.class.getDeclaredField("level" + level+"like");
+                            Field f = TbMapRelationForm.class.getDeclaredField("level" + level+"like");
                             f.setAccessible(true);
                             f.set(mapParam, likeCondition.get(config.getConfigKey()));
                         } catch (IllegalAccessException | NoSuchFieldException e) {
@@ -135,7 +137,22 @@ public class TbMapRelationServiceImpl implements TbMapRelationService {
                 }
             }
 
-
+            if (inCondition != null && inCondition.size() > 0) {
+                for (TbConfig config : metaConfigList) {
+                    String level = config.getConfigValue();
+                    if (StringUtils.isNotBlank(level)) {
+                        //按照传进来的参数，参照元数据类型，放到对应的位置上
+                        try {
+                            Field f = TbMapRelationForm.class.getDeclaredField("level" + level+"in");
+                            f.setAccessible(true);
+                            f.set(mapParam, inCondition.get(config.getConfigKey()));
+                        } catch (IllegalAccessException | NoSuchFieldException e) {
+                            log.error("按照级别组装参数数据过程中出错，错误原因{},config 参数{}，conditionLike参数 {}", e, config, condition);
+                            throw e;
+                        }
+                    }
+                }
+            }
 
             if(condition != null && condition.size() > 0 && condition.get("order") != null){
                 String sort = condition.get("order");
@@ -167,9 +184,9 @@ public class TbMapRelationServiceImpl implements TbMapRelationService {
         }
     }
     @Override
-    public <T> List<T> getMapRelation(String configType, Map<String, String> condition, Class<T> clazz) throws Exception {
+    public <T> List<T> getMapRelation(String configType, Map<String,String> condition, Map<String,String> likeCondition,Map<String,String> inCondition,Class<T> clazz) throws Exception {
         List<T> resultList = new ArrayList<>();
-        List<String> strList = getMapLikeRelation(configType, condition,null);
+        List<String> strList = getMapLikeRelation(configType, condition,likeCondition,inCondition);
         if (!CollectionUtils.isEmpty(strList)) {
             for (String str : strList) {
                 resultList.add(JSON.parseObject(str, clazz));
