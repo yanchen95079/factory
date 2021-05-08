@@ -83,7 +83,6 @@ public class TbCheckInfoController {
     }
 
     @ApiOperation("导出Excel")
-    @ResponseBody
     @RequestMapping(value = "/outExcel/{samplingFlag}", method = RequestMethod.POST)
     public void outExcel(
             @ApiParam(value = "samplingFlag") @PathVariable(value = "samplingFlag") Integer samplingFlag,
