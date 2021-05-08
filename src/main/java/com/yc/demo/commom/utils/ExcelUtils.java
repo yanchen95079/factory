@@ -61,6 +61,13 @@ public class ExcelUtils {
                     "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            response.setHeader("Access-Control-Max-Age", "3600");
+            response.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, X-Custom-Header,at,tid");
+            //添加请求头 给前端获取文件流名称
+            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+            response.setHeader("Access-Control-Allow-Credentials", "true");
             outStream=response.getOutputStream();
             workbook.write(outStream);
         } catch (IOException e) {

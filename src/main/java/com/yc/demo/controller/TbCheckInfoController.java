@@ -87,9 +87,9 @@ public class TbCheckInfoController {
     public void outExcel(
             @ApiParam(value = "samplingFlag") @PathVariable(value = "samplingFlag") Integer samplingFlag,
             @RequestBody TbCheckInfo tbCheckInfo,
-            HttpServletResponse response
+            HttpServletResponse res
     ) throws Exception {
-        tbCheckInfoService.outExcel(tbCheckInfo,samplingFlag,response);
+        tbCheckInfoService.outExcel(tbCheckInfo,samplingFlag,res);
     }
 
 }

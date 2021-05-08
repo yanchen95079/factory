@@ -25,7 +25,7 @@ public class CORSFilter implements Filter {
         //添加请求头 给前端获取文件流名称
         res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
         res.setHeader("Access-Control-Allow-Credentials", "true");
-        chain.doFilter(request, response);
+        chain.doFilter(request, res);
     }
 
     @Override
