@@ -76,6 +76,7 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if(checkInfoSelectPage.getCreateTimeStart()!=null && checkInfoSelectPage.getCreateTimeEnd()!=null){
             criteria.andCreateTimeBetween(checkInfoSelectPage.getCreateTimeStart(),checkInfoSelectPage.getCreateTimeEnd());
         }
+        example.setOrderByClause(" serial_no asc");
         PageHelper.startPage(checkInfoSelectPage.getOffset(), checkInfoSelectPage.getLimit());
         List<TbCheckInfo> tbCheckInfos = tbCheckInfoMapper.selectByExample(example);
         PageInfo<TbCheckInfo> pageInfo = new PageInfo<>(tbCheckInfos);
