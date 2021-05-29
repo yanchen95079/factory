@@ -98,16 +98,27 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         if(!CollectionUtils.isEmpty(this.select(tbCheckInfoSelect))){
             throw new MyException(500,"您扫描的质检单已经存在");
         }
-
+        //拿到对应检测项目的配置
+        TbTestItems tbTestItems = new TbTestItems();
+        tbTestItems.setConfigKey(tbCheckInfo.getConfigKey());
+        List<TbTestItems> select = tbTestItemsService.select(tbTestItems);
+        //拿到对应装配内容表的配置
+        AssemblyContentForm tbAssemblyContent=new AssemblyContentForm();
+        List<TbAssemblyContent> select1 = tbAssemblyContentService.select(tbAssemblyContent);
+        //检测是否所有的配置下都有项目
+        List<Long> collect = select1.stream().map(TbAssemblyContent::getId).collect(Collectors.toList());
+        List<Long> collect1 = select.stream().map(TbTestItems::getAssemblyContentId).collect(Collectors.toList());
+        for (Long aLong : collect) {
+            if(!collect1.contains(aLong)){
+                throw new MyException(500,"您装配内容存在没有设置检测项目的配置,请查看");
+            }
+        }
         Date currentDate = DateUtil.getCurrentDate();
         //添加检查单
         tbCheckInfo.setCreateTime(currentDate);
         tbCheckInfo.setUpdateTime(currentDate);
         tbCheckInfoMapper.insertSelective(tbCheckInfo);
-        //拿到对应检测项目的配置 添加detail
-        TbTestItems tbTestItems = new TbTestItems();
-        tbTestItems.setConfigKey(tbCheckInfo.getConfigKey());
-        List<TbTestItems> select = tbTestItemsService.select(tbTestItems);
+        //添加detail
         //添加原始检查单详情
         List<TbCheckInfoDetail> list = new ArrayList<>();
         for (TbTestItems testItems : select) {
