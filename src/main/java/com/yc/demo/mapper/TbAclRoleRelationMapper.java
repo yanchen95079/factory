@@ -93,4 +93,6 @@ public interface TbAclRoleRelationMapper {
      * @mbg.generated Sat May 29 19:24:45 CST 2021
      */
     int updateByPrimaryKey(TbAclRoleRelation record);
+
+    void batchInsert(List<TbAclRoleRelation> list);
 }

@@ -93,4 +93,6 @@ public interface TbUserRoleRelationMapper {
      * @mbg.generated Sat May 29 19:24:21 CST 2021
      */
     int updateByPrimaryKey(TbUserRoleRelation record);
+
+    void batchInsert(List<TbUserRoleRelation> list);
 }

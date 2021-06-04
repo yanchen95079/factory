@@ -3,10 +3,12 @@ package com.yc.demo.service.impl;
 import com.yc.demo.domain.TbCheckInfo;
 import com.yc.demo.domain.TbConfig;
 import com.yc.demo.domain.TbConfigExample;
+import com.yc.demo.domain.TbMapRelation;
 import com.yc.demo.domain.ex.ConfigForm;
 import com.yc.demo.mapper.TbConfigMapper;
 import com.yc.demo.service.TbCheckInfoService;
 import com.yc.demo.service.TbConfigService;
+import com.yc.demo.service.TbMapRelationService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,7 +32,8 @@ public class TbConfigServiceImpl implements TbConfigService {
     private TbConfigMapper tbConfigMapper;
     @Autowired
     private TbCheckInfoService tbCheckInfoService;
-
+    @Autowired
+    private TbMapRelationService tbMapRelationService;
     @Override
     public List<TbConfig> select(TbConfig config) {
         TbConfigExample example=new TbConfigExample();
@@ -74,4 +78,5 @@ public class TbConfigServiceImpl implements TbConfigService {
         List<TbConfig> select = this.select(configForm);
         return select.stream().filter(x->strings.contains(x.getConfigKey())).collect(Collectors.toList());
     }
+
 }

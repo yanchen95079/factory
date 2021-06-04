@@ -6,6 +6,8 @@ import com.yc.demo.domain.TbCheckInfo;
 import com.yc.demo.domain.TbConfig;
 import com.yc.demo.domain.TbMapRelation;
 import com.yc.demo.domain.ex.ConfigForm;
+import com.yc.demo.domain.ex.MapRelationPojo;
+import com.yc.demo.domain.ex.MapRelationSelect;
 import com.yc.demo.service.TbConfigService;
 import com.yc.demo.service.TbMapRelationService;
 import io.swagger.annotations.Api;
@@ -69,4 +71,38 @@ public class TbConfigController {
 
     }
 
+    @ApiOperation("insertMapRelation")
+    @RequestMapping(value = "insertMapRelation", method = RequestMethod.POST)
+    public HSResult insertMapRelation(
+            @RequestBody MapRelationPojo mapRelationPojo
+    ) throws Exception {
+        tbMapRelationService.insert(mapRelationPojo);
+        return HSResult.ok();
+    }
+    @ApiOperation("updateMapRelation")
+    @RequestMapping(value = "updateMapRelation/{id}", method = RequestMethod.POST)
+    public HSResult updateMapRelation(
+            @ApiParam(value = "id") @PathVariable(value = "id") Long id,
+            @RequestBody MapRelationPojo mapRelationPojo
+    ) throws Exception {
+        mapRelationPojo.setId(id);
+        tbMapRelationService.updateById(mapRelationPojo);
+        return HSResult.ok();
+    }
+    @ApiOperation("delMapRelation")
+    @RequestMapping(value = "delMapRelation/{id}", method = RequestMethod.POST)
+    public HSResult delMapRelation(
+            @ApiParam(value = "id") @PathVariable(value = "id") Long id
+            ) throws Exception {
+        tbMapRelationService.delById(id);
+        return HSResult.ok();
+    }
+    @ApiOperation("selectMapRelation")
+    @RequestMapping(value = "selectMapRelation", method = RequestMethod.POST)
+    public HSResult selectMapRelation(
+            @RequestBody MapRelationSelect mapRelationSelect
+    ) throws Exception {
+        return new HSResult(tbMapRelationService.getMapRelation(mapRelationSelect.getConfigType(),mapRelationSelect.getCondition(),null,null,Map.class));
+
+    }
 }

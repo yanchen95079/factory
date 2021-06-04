@@ -6,9 +6,12 @@ import com.yc.demo.commom.utils.HexUtil;
 import com.yc.demo.commom.utils.IdUtil;
 import com.yc.demo.domain.TbUser;
 import com.yc.demo.domain.TbUserExample;
+import com.yc.demo.domain.ex.TbUserEx;
 import com.yc.demo.mapper.TbUserMapper;
+import com.yc.demo.service.RoleService;
 import com.yc.demo.service.TbUserService;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,7 +27,8 @@ import java.util.stream.Collectors;
 public class TbUserServiceImpl implements TbUserService {
     @Autowired
     private TbUserMapper tbUserMapper;
-
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public List<TbUser> select(TbUser tbUser) {
@@ -38,6 +42,25 @@ public class TbUserServiceImpl implements TbUserService {
         }
         if(tbUser.getUserCode()!=null){
             criteria.andUserCodeEqualTo(tbUser.getUserCode());
+        }
+        return tbUserMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<TbUser> selectEx(TbUserEx tbUser) {
+        TbUserExample example=new TbUserExample();
+        TbUserExample.Criteria criteria = example.createCriteria();
+        if(StringUtils.isNotEmpty(tbUser.getPhone())){
+            criteria.andPhoneEqualTo(tbUser.getPhone());
+        }
+        if(StringUtils.isNotEmpty(tbUser.getPassword())){
+            criteria.andPasswordEqualTo(CryptoUtil.md5Hex(tbUser.getPassword()));
+        }
+        if(tbUser.getUserCode()!=null){
+            criteria.andUserCodeEqualTo(tbUser.getUserCode());
+        }
+        if(!CollectionUtils.isEmpty(tbUser.getUserCodes())){
+            criteria.andUserCodeIn(tbUser.getUserCodes());
         }
         return tbUserMapper.selectByExample(example);
     }
@@ -100,7 +123,7 @@ public class TbUserServiceImpl implements TbUserService {
     }
 
     @Override
-    public TbUser login(TbUser tbUser) {
+    public TbUserEx login(TbUser tbUser) {
         if(StringUtils.isEmpty(tbUser.getPhone())&&StringUtils.isEmpty(tbUser.getLoginCode())){
             throw new MyException(500,"手机号和登录号至少输入一个");
         }
@@ -125,6 +148,13 @@ public class TbUserServiceImpl implements TbUserService {
         if(CollectionUtils.isEmpty(select)){
             throw new MyException(500,"用户不存在");
         }
-        return select.get(0);
+
+        TbUserEx ex=new TbUserEx();
+        BeanUtils.copyProperties(select.get(0),ex);
+        //获取权限
+        TbUserEx user = roleService.selectAclByUserCode(ex.getUserCode());
+        ex.setAclList(user.getAclList());
+        ex.setRoleList(user.getRoleList());
+        return ex;
     }
 }

@@ -2,9 +2,11 @@ package com.yc.demo.service;
 
 import com.yc.demo.domain.TbCheckInfo;
 import com.yc.demo.domain.TbConfig;
+import com.yc.demo.domain.TbMapRelation;
 import com.yc.demo.domain.ex.ConfigForm;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yanchen
@@ -21,4 +23,5 @@ public interface TbConfigService {
     void update(TbConfig config);
 
     public List<TbConfig>  selectAllConfigKey(ConfigForm configForm);
+
 }
