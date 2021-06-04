@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yc.demo.mapper.TbStatusFlowRecordMapper">
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into tb_status_flow_record (work_user_code, work_user_name, content,
+    remark, create_time, update_time,
+    create_user, update_user, enable,
+    acl_code, def_type, group_id
+    )
+    VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.workUserCode,jdbcType=VARCHAR}, #{item.workUserName,jdbcType=VARCHAR}, #{item.content,jdbcType=VARCHAR},
+      #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP},
+      #{item.createUser,jdbcType=BIGINT}, #{item.updateUser,jdbcType=BIGINT}, #{item.enable,jdbcType=INTEGER},
+      #{item.aclCode,jdbcType=VARCHAR}, #{item.defType,jdbcType=INTEGER}, #{item.groupId,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+</mapper>

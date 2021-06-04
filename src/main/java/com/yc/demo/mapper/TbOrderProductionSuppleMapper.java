@@ -93,4 +93,8 @@ public interface TbOrderProductionSuppleMapper {
      * @mbg.generated Sat May 29 19:26:14 CST 2021
      */
     int updateByPrimaryKey(TbOrderProductionSupple record);
+
+    void batchInsert(List<TbOrderProductionSupple> list);
+
+    void batchUpdate(List<TbOrderProductionSupple> list);
 }

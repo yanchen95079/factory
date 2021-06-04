@@ -93,4 +93,8 @@ public interface TbOrderWarehousingMapper {
      * @mbg.generated Sat May 29 19:26:35 CST 2021
      */
     int updateByPrimaryKey(TbOrderWarehousing record);
+
+    void batchInsert(List<TbOrderWarehousing> list);
+
+    void batchUpdate(List<TbOrderWarehousing> list);
 }

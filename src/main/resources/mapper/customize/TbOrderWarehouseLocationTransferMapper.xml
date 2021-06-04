@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yc.demo.mapper.TbOrderWarehouseLocationTransferMapper">
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into tb_order_warehouse_location_transfer (group_uuid, original_position, new_position,
+    item_num, come_time, quantity,
+    original_warehouse, new_warehouse, original_location,
+    new_location, remark, create_time,
+    update_time, create_user, update_user,
+    enable)
+
+
+    VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.groupUuid,jdbcType=VARCHAR}, #{item.originalPosition,jdbcType=VARCHAR}, #{item.newPosition,jdbcType=VARCHAR},
+      #{item.itemNum,jdbcType=VARCHAR}, #{item.comeTime,jdbcType=TIMESTAMP}, #{item.quantity,jdbcType=INTEGER},
+      #{item.originalWarehouse,jdbcType=VARCHAR}, #{item.newWarehouse,jdbcType=VARCHAR}, #{item.originalLocation,jdbcType=VARCHAR},
+      #{item.newLocation,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP},
+      #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createUser,jdbcType=BIGINT}, #{item.updateUser,jdbcType=BIGINT},
+      #{item.enable,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <update id="batchUpdate" parameterType="java.util.List">
+
+    <foreach collection="list" item="record" index="index" separator=";">
+      update tb_order_warehouse_location_transfer
+      <trim prefix="set" suffixOverrides=",">
+
+        <if test="record.groupUuid != null">
+          group_uuid = #{record.groupUuid,jdbcType=VARCHAR},
+        </if>
+        <if test="record.originalPosition != null">
+          original_position = #{record.originalPosition,jdbcType=VARCHAR},
+        </if>
+        <if test="record.newPosition != null">
+          new_position = #{record.newPosition,jdbcType=VARCHAR},
+        </if>
+        <if test="record.itemNum != null">
+          item_num = #{record.itemNum,jdbcType=VARCHAR},
+        </if>
+        <if test="record.comeTime != null">
+          come_time = #{record.comeTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.quantity != null">
+          quantity = #{record.quantity,jdbcType=INTEGER},
+        </if>
+        <if test="record.originalWarehouse != null">
+          original_warehouse = #{record.originalWarehouse,jdbcType=VARCHAR},
+        </if>
+        <if test="record.newWarehouse != null">
+          new_warehouse = #{record.newWarehouse,jdbcType=VARCHAR},
+        </if>
+        <if test="record.originalLocation != null">
+          original_location = #{record.originalLocation,jdbcType=VARCHAR},
+        </if>
+        <if test="record.newLocation != null">
+          new_location = #{record.newLocation,jdbcType=VARCHAR},
+        </if>
+        <if test="record.remark != null">
+          remark = #{record.remark,jdbcType=VARCHAR},
+        </if>
+        <if test="record.createTime != null">
+          create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.updateTime != null">
+          update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.createUser != null">
+          create_user = #{record.createUser,jdbcType=BIGINT},
+        </if>
+        <if test="record.updateUser != null">
+          update_user = #{record.updateUser,jdbcType=BIGINT},
+        </if>
+        <if test="record.enable != null">
+          enable = #{record.enable,jdbcType=INTEGER},
+        </if>
+      </trim>
+      where id =#{record.id}
+
+    </foreach>
+
+  </update>
+</mapper>

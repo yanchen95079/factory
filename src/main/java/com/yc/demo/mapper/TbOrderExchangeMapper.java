@@ -93,4 +93,7 @@ public interface TbOrderExchangeMapper {
      * @mbg.generated Sat May 29 19:25:54 CST 2021
      */
     int updateByPrimaryKey(TbOrderExchange record);
+    void batchInsert(List<TbOrderExchange> list);
+    void batchUpdate(List<TbOrderExchange> list);
+
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yc.demo.mapper.TbOrderWarehousingMapper">
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into tb_order_warehousing (group_uuid, finished_product_model,
+    remark, create_time, update_time,
+    create_user, update_user, enable,
+    name, serial_num, unit,
+    quantity)
+    VALUES
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.groupUuid,jdbcType=VARCHAR}, #{item.finishedProductModel,jdbcType=VARCHAR},
+      #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP},
+      #{item.createUser,jdbcType=BIGINT}, #{item.updateUser,jdbcType=BIGINT}, #{item.enable,jdbcType=INTEGER},
+      #{item.name,jdbcType=VARCHAR}, #{item.serialNum,jdbcType=VARCHAR}, #{item.unit,jdbcType=VARCHAR},
+      #{item.quantity,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <update id="batchUpdate" parameterType="java.util.List">
+
+    <foreach collection="list" item="record" index="index" separator=";">
+      update tb_order_warehousing
+      <trim prefix="set" suffixOverrides=",">
+
+        <if test="record.groupUuid != null">
+          group_uuid = #{record.groupUuid,jdbcType=VARCHAR},
+        </if>
+        <if test="record.finishedProductModel != null">
+          finished_product_model = #{record.finishedProductModel,jdbcType=VARCHAR},
+        </if>
+        <if test="record.remark != null">
+          remark = #{record.remark,jdbcType=VARCHAR},
+        </if>
+        <if test="record.createTime != null">
+          create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.updateTime != null">
+          update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.createUser != null">
+          create_user = #{record.createUser,jdbcType=BIGINT},
+        </if>
+        <if test="record.updateUser != null">
+          update_user = #{record.updateUser,jdbcType=BIGINT},
+        </if>
+        <if test="record.enable != null">
+          enable = #{record.enable,jdbcType=INTEGER},
+        </if>
+        <if test="record.name != null">
+          name = #{record.name,jdbcType=VARCHAR},
+        </if>
+        <if test="record.serialNum != null">
+          serial_num = #{record.serialNum,jdbcType=VARCHAR},
+        </if>
+        <if test="record.unit != null">
+          unit = #{record.unit,jdbcType=VARCHAR},
+        </if>
+        <if test="record.quantity != null">
+          quantity = #{record.quantity,jdbcType=INTEGER},
+        </if>
+      </trim>
+      where id =#{record.id}
+
+    </foreach>
+
+  </update>
+</mapper>

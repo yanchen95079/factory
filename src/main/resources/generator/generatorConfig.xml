@@ -46,7 +46,7 @@
             <!--&lt;!&ndash; mysql 配置 &ndash;&gt;-->
             <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
         <!--</table>-->
-        <table tableName="tb_order_warehousing">
+        <table tableName="tb_order_general">
         <!-- mysql 配置 -->
         <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
 
