@@ -31,13 +31,16 @@ public class AclServiceImpl implements AclService {
 
     @Override
     public void updateById(TbAcl acl) {
-        tbAclMapper.updateByPrimaryKey(acl);
+        tbAclMapper.updateByPrimaryKeySelective(acl);
     }
 
     @Override
     public List<TbAcl> select(TbAclEx acl) {
         TbAclExample example=new TbAclExample();
         TbAclExample.Criteria criteria = example.createCriteria();
+        if(StringUtils.isNotEmpty(acl.getNameLike())){
+            criteria.andAclNameLike("%"+acl.getNameLike()+"%");
+        }
         if(acl.getId()!=null){
             criteria.andIdEqualTo(acl.getId());
         }

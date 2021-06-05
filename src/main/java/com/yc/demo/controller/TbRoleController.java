@@ -8,6 +8,7 @@ import com.yc.demo.domain.TbRole;
 import com.yc.demo.domain.TbUserRoleRelation;
 import com.yc.demo.domain.ex.TbAclEx;
 import com.yc.demo.domain.ex.TbRoleEx;
+import com.yc.demo.domain.ex.TbRolePage;
 import com.yc.demo.service.AclService;
 import com.yc.demo.service.RoleService;
 import io.swagger.annotations.Api;
@@ -36,12 +37,12 @@ public class TbRoleController {
     @Autowired
     private RoleService roleService;
 
-    @ApiOperation("查询角色")
-    @RequestMapping(value = "/select", method = RequestMethod.POST)
+    @ApiOperation("查询角色分页")
+    @RequestMapping(value = "/selectPage", method = RequestMethod.POST)
     public HSResult select(
-            @RequestBody TbRoleEx role
+            @RequestBody TbRolePage role
     ) throws Exception {
-        return new HSResult(roleService.select(role));
+        return new HSResult(roleService.selectPage(role));
     }
 
     @ApiOperation("新建角色")
@@ -49,8 +50,7 @@ public class TbRoleController {
     public HSResult insert(
             @RequestBody TbRole role
     ) throws Exception {
-        roleService.insert(role);
-        return HSResult.ok();
+        return new HSResult(roleService.insert(role));
     }
 
     @ApiOperation("更新角色")
@@ -68,7 +68,7 @@ public class TbRoleController {
     @RequestMapping(value = "/bindUser/{roleCode}", method = RequestMethod.POST)
     public HSResult bindUser(
             @ApiParam(value = "roleCode") @PathVariable(value = "roleCode") String roleCode,
-            @RequestParam List<TbUserRoleRelation> list
+            @RequestBody List<TbUserRoleRelation> list
     ) throws Exception {
         roleService.updateUserRoleRelation(list,roleCode);
         return HSResult.ok();
@@ -77,7 +77,7 @@ public class TbRoleController {
     @RequestMapping(value = "/bindAcl/{roleCode}", method = RequestMethod.POST)
     public HSResult bindAcl(
             @ApiParam(value = "roleCode") @PathVariable(value = "roleCode") String roleCode,
-            @RequestParam List<TbAclRoleRelation> list
+            @RequestBody List<TbAclRoleRelation> list
     ) throws Exception {
         roleService.updateAclRoleRelation(list,roleCode);
         return HSResult.ok();

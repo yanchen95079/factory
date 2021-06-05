@@ -1,19 +1,10 @@
 package com.yc.demo.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yc.demo.commom.exception.MyException;
-import com.yc.demo.domain.TbAcl;
-import com.yc.demo.domain.TbAclRoleRelation;
-import com.yc.demo.domain.TbAclRoleRelationExample;
-import com.yc.demo.domain.TbRole;
-import com.yc.demo.domain.TbRoleExample;
-import com.yc.demo.domain.TbUser;
-import com.yc.demo.domain.TbUserRoleRelation;
-import com.yc.demo.domain.TbUserRoleRelationExample;
-import com.yc.demo.domain.ex.TbAclEx;
-import com.yc.demo.domain.ex.TbAclRoleRelationEx;
-import com.yc.demo.domain.ex.TbRoleEx;
-import com.yc.demo.domain.ex.TbUserEx;
-import com.yc.demo.domain.ex.TbUserRoleRelationEx;
+import com.yc.demo.domain.*;
+import com.yc.demo.domain.ex.*;
 import com.yc.demo.mapper.TbAclRoleRelationMapper;
 import com.yc.demo.mapper.TbRoleMapper;
 import com.yc.demo.mapper.TbUserRoleRelationMapper;
@@ -52,13 +43,16 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private AclService aclService;
     @Override
-    public void insert(TbRole role) {
+    public TbRole insert(TbRole role) {
         if(StringUtils.isEmpty(role.getRoleCode())){
-            role.setRoleCode("role-"+UUID.randomUUID().toString().replaceAll("-",""));
+            role.setRoleCode("ROLE"+UUID.randomUUID().toString().replaceAll("-",""));
         }
+        role.setpRoleCode("0");
+        role.setCodes("0,");
         role.setCreateTime(new Date());
         role.setUpdateTime(new Date());
         roleMapper.insertSelective(role);
+        return role;
     }
 
     @Override
@@ -105,12 +99,32 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public PageInfo<TbRole> selectPage(TbRolePage role) {
+        TbRoleExample example=new TbRoleExample();
+        TbRoleExample.Criteria criteria = example.createCriteria();
+        if(role.getId()!=null){
+            criteria.andIdEqualTo(role.getId());
+        }
+        if(StringUtils.isNotEmpty(role.getRoleName())){
+            criteria.andRoleNameEqualTo(role.getRoleName());
+        }
+        if(StringUtils.isNotEmpty(role.getRoleCode())){
+            criteria.andRoleCodeEqualTo(role.getRoleCode());
+        }
+        PageHelper.startPage(role.getOffset(), role.getLimit());
+        List<TbRole> tbRoles = roleMapper.selectByExample(example);
+        return new PageInfo<>(tbRoles);
+
+    }
+
+    @Override
     public void updateUserRoleRelation(List<TbUserRoleRelation> list, String roleCode) {
         TbUserRoleRelationExample example=new TbUserRoleRelationExample();
         TbUserRoleRelationExample.Criteria criteria = example.createCriteria();
         criteria.andRoleCodeEqualTo(roleCode);
         tbUserRoleRelationMapper.deleteByExample(example);
         list.forEach(x->{
+            x.setRoleCode(roleCode);
             x.setCreateTime(new Date());
         });
         tbUserRoleRelationMapper.batchInsert(list);
@@ -123,6 +137,7 @@ public class RoleServiceImpl implements RoleService {
         criteria.andRoleCodeEqualTo(roleCode);
         tbAclRoleRelationMapper.deleteByExample(example);
         list.forEach(x->{
+            x.setRoleCode(roleCode);
             x.setCreateTime(new Date());
         });
         tbAclRoleRelationMapper.batchInsert(list);
@@ -134,7 +149,9 @@ public class RoleServiceImpl implements RoleService {
         TbUserRoleRelationExample.Criteria criteria = example.createCriteria();
         criteria.andRoleCodeEqualTo(roleCode);
         List<TbUserRoleRelation> tbUserRoleRelations = tbUserRoleRelationMapper.selectByExample(example);
-
+        if(CollectionUtils.isEmpty(tbUserRoleRelations)){
+            return new ArrayList<TbUserRoleRelationEx>();
+        }
         List<Long> userCodes = tbUserRoleRelations.stream().map(x->Long.valueOf(x.getUserCode())).collect(Collectors.toList());
         TbUserEx tbUser=new TbUserEx();
         tbUser.setUserCodes(userCodes);

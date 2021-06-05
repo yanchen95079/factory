@@ -1,12 +1,10 @@
 package com.yc.demo.service;
 
+import com.github.pagehelper.PageInfo;
 import com.yc.demo.domain.TbAclRoleRelation;
 import com.yc.demo.domain.TbRole;
 import com.yc.demo.domain.TbUserRoleRelation;
-import com.yc.demo.domain.ex.TbAclRoleRelationEx;
-import com.yc.demo.domain.ex.TbRoleEx;
-import com.yc.demo.domain.ex.TbUserEx;
-import com.yc.demo.domain.ex.TbUserRoleRelationEx;
+import com.yc.demo.domain.ex.*;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ import java.util.List;
  * @Description：
  */
 public interface RoleService {
-    void insert(TbRole role);
+    TbRole insert(TbRole role);
 
     void updateById(TbRole role);
 
@@ -25,7 +23,7 @@ public interface RoleService {
 
     List<TbRole> select(TbRoleEx role);
 
-
+    PageInfo<TbRole> selectPage(TbRolePage tbRolePage );
     void updateUserRoleRelation(List<TbUserRoleRelation> list,String roleCode);
 
     void updateAclRoleRelation(List<TbAclRoleRelation> list,String roleCode);

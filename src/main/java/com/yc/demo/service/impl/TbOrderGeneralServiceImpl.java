@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.domain.*;
+import com.yc.demo.domain.ex.OrderGeneralDetailPojo;
 import com.yc.demo.domain.ex.OrderGeneralPojo;
 import com.yc.demo.domain.ex.TbOrderGeneralSelectPage;
 import com.yc.demo.mapper.TbOrderGeneralMapper;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * date 2021/5/29 20:38
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = Throwable.class)
 public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
     @Autowired
     private TbOrderGeneralMapper tbOrderGeneralMapper;
@@ -156,9 +157,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
         record.setContent(orderGeneralPojo.getWorkContent());
         tbStatusFlowRecordService.updateByGroupIdAndTypeAndAcl(record);
-        // update对应的子业务的数据
-        orderGeneralPojo.setId(tbOrderGeneralOld.getId());
-        orderGeneralSupport.updateOrder(true,orderGeneralPojo);
+
         //找到这个权限下所有的工作流流程
         TbDefinitionStateFlow flow=new TbDefinitionStateFlow();
         flow.setDefType(tbOrderGeneralOld.getDefType());
@@ -193,6 +192,12 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
             throw new MyException(500,"没有搜到对应单子");
         }
         TbOrderGeneral tbOrderGeneralOld= tbOrderGeneralList.get(0);
+        if(StringUtils.isEmpty(tbOrderGeneralOld.getNowUserCode())){
+            throw new MyException(500,"此单据没有被受理,无法后退");
+        }
+        if(!String.valueOf(orderGeneralPojo.getUser().getUserCode()).equals(tbOrderGeneralOld.getNowUserCode())){
+            throw new MyException(500,"当前单子并非您受理,请刷新页面验证");
+        }
         //update对应的工作流log
         TbStatusFlowRecord record=new TbStatusFlowRecord();
         record.setGroupId(tbOrderGeneralOld.getGroupUuid());
@@ -203,9 +208,6 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
         record.setContent(orderGeneralPojo.getWorkContent());
         tbStatusFlowRecordService.updateByGroupIdAndTypeAndAcl(record);
-        // update对应的子业务的数据 虽然这里不可能update
-        orderGeneralPojo.setId(orderGeneralPojo.getId());
-        orderGeneralSupport.updateOrder(true,orderGeneralPojo);
         //找到这个权限下所有的工作流流程
         TbDefinitionStateFlow flow=new TbDefinitionStateFlow();
         flow.setDefType(tbOrderGeneralOld.getDefType());
@@ -326,7 +328,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
     }
 
     @Override
-    public PageInfo<TbOrderGeneral> selectAll(TbOrderGeneralSelectPage tbOrderGeneralSelectPage) {
+    public PageInfo<TbOrderGeneral> selectPage(TbOrderGeneralSelectPage tbOrderGeneralSelectPage) {
         //查找所有单子 按照当前人为自己的排在前面 然后是当前人为空的 然后是时间
         TbOrderGeneralExample example=new TbOrderGeneralExample();
         TbOrderGeneralExample.Criteria criteria = example.createCriteria();
@@ -361,6 +363,17 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         PageHelper.startPage(tbOrderGeneralSelectPage.getOffset(), tbOrderGeneralSelectPage.getLimit());
         List<TbOrderGeneral> tbOrderGenerals = tbOrderGeneralMapper.selectByExample(example);
         return new PageInfo<>(tbOrderGenerals);
+    }
 
+    @Override
+    public OrderGeneralDetailPojo selectDetailByGroupUuid(String groupUuid) {
+        TbOrderGeneral tbOrderGeneral=new TbOrderGeneral();
+        tbOrderGeneral.setGroupUuid(groupUuid);
+        List<TbOrderGeneral> tbOrderGeneralList = this.select(tbOrderGeneral);
+        if(CollectionUtils.isEmpty(tbOrderGeneralList)){
+            throw new MyException(500,"没有找到对应单子");
+        }
+        TbOrderGeneral tbOrderGeneralOld= tbOrderGeneralList.get(0);
+        return orderGeneralSupport.select(tbOrderGeneralOld.getDefType(),groupUuid);
     }
 }

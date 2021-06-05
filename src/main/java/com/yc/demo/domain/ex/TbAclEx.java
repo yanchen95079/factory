@@ -16,4 +16,5 @@ import java.util.List;
 @Getter
 public class TbAclEx extends TbAcl {
     private List<String> aclCodes;
+    private String nameLike;
 }
