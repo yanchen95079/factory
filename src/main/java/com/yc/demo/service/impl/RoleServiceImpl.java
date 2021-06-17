@@ -199,6 +199,9 @@ public class RoleServiceImpl implements RoleService {
         TbUserRoleRelationExample.Criteria criteria = example.createCriteria();
         criteria.andUserCodeEqualTo(String.valueOf(userCode));
         List<TbUserRoleRelation> tbUserRoleRelations = tbUserRoleRelationMapper.selectByExample(example);
+        if(CollectionUtils.isEmpty(tbUserRoleRelations)){
+            return ex;
+        }
         List<String> roleCodes = tbUserRoleRelations.stream().map(TbUserRoleRelation::getRoleCode).collect(Collectors.toList());
         TbRoleEx role=new TbRoleEx();
         role.setRoleCodes(roleCodes);
@@ -212,10 +215,13 @@ public class RoleServiceImpl implements RoleService {
         TbAclRoleRelationExample.Criteria criteria2 = example2.createCriteria();
         criteria2.andRoleCodeIn(roleCodes);
         List<TbAclRoleRelation> tbAclRoleRelations = tbAclRoleRelationMapper.selectByExample(example2);
+        if(CollectionUtils.isEmpty(tbAclRoleRelations)){
+            return ex;
+        }
         List<String> aclCodes = tbAclRoleRelations.stream().map(TbAclRoleRelation::getAclCode).collect(Collectors.toList());
         TbAclEx aclEx=new TbAclEx();
         aclEx.setAclCodes(aclCodes);
-        ex.setAclList( aclService.select(aclEx));
+        ex.setAclList(aclService.select(aclEx));
         return ex;
     }
 }
