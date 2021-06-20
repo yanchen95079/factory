@@ -104,6 +104,7 @@ public class TbCheckInfoServiceImpl implements TbCheckInfoService {
         List<TbTestItems> select = tbTestItemsService.select(tbTestItems);
         //拿到对应装配内容表的配置
         AssemblyContentForm tbAssemblyContent=new AssemblyContentForm();
+        tbAssemblyContent.setConfigKey(tbCheckInfo.getConfigKey());
         List<TbAssemblyContent> select1 = tbAssemblyContentService.select(tbAssemblyContent);
         //检测是否所有的配置下都有项目
         List<Long> collect = select1.stream().map(TbAssemblyContent::getId).collect(Collectors.toList());
