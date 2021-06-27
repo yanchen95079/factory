@@ -99,10 +99,11 @@ public class OrderGeneralSupport {
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderProductionSuppleMapper.batchUpdate(collect);
             }
-            List<TbOrderProductionSupple> collectDel =collect.stream().filter(x->!ids.contains(x.getId())).collect(Collectors.toList());
+            List<Long> idsParam=collect.stream().map(TbOrderProductionSupple::getId).collect(Collectors.toList());
+            List<Long> collectDel = ids.stream().filter(x -> !idsParam.contains(x)).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectDel)){
-                for (TbOrderProductionSupple tbOrderProductionSupple : collectDel) {
-                    tbOrderProductionSuppleMapper.deleteByPrimaryKey(tbOrderProductionSupple.getId());
+                for (Long id : collectDel) {
+                    tbOrderProductionSuppleMapper.deleteByPrimaryKey(id);
                 }
             }
             List<TbOrderProductionSupple> collectInsert = orderGeneralPojo.getTbOrderProductionSupples().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
@@ -124,10 +125,11 @@ public class OrderGeneralSupport {
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderExchangeMapper.batchUpdate(collect);
             }
-            List<TbOrderExchange> collectDel =collect.stream().filter(x->!ids.contains(x.getId())).collect(Collectors.toList());
+            List<Long> idsParam=collect.stream().map(TbOrderExchange::getId).collect(Collectors.toList());
+            List<Long> collectDel = ids.stream().filter(x -> !idsParam.contains(x)).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectDel)){
-                for (TbOrderExchange tbOrderExchange : collectDel) {
-                    tbOrderExchangeMapper.deleteByPrimaryKey(tbOrderExchange.getId());
+                for (Long id : collectDel) {
+                    tbOrderExchangeMapper.deleteByPrimaryKey(id);
                 }
             }
             List<TbOrderExchange> collectInsert = orderGeneralPojo.getTbOrderExchanges().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
@@ -146,14 +148,14 @@ public class OrderGeneralSupport {
                 return;
             }
             List<TbOrderWarehousing> collect = orderGeneralPojo.getTbOrderWarehousings().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
-
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderWarehousingMapper.batchUpdate(collect);
             }
-            List<TbOrderWarehousing> collectDel = collect.stream().filter(x -> !ids.contains(x.getId())).collect(Collectors.toList());
+            List<Long> idsParam=collect.stream().map(TbOrderWarehousing::getId).collect(Collectors.toList());
+            List<Long> collectDel = ids.stream().filter(x -> !idsParam.contains(x)).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectDel)){
-                for (TbOrderWarehousing tbOrderWarehousing : collectDel) {
-                    tbOrderWarehousingMapper.deleteByPrimaryKey(tbOrderWarehousing.getId());
+                for (Long id : collectDel) {
+                    tbOrderWarehousingMapper.deleteByPrimaryKey(id);
                 }
             }
             List<TbOrderWarehousing> collectInsert = orderGeneralPojo.getTbOrderWarehousings().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
@@ -175,10 +177,11 @@ public class OrderGeneralSupport {
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderWarehouseLocationTransferMapper.batchUpdate(collect);
             }
-            List<TbOrderWarehouseLocationTransfer> collectDel = collect.stream().filter(x -> !ids.contains(x.getId())).collect(Collectors.toList());
+            List<Long> idsParam=collect.stream().map(TbOrderWarehouseLocationTransfer::getId).collect(Collectors.toList());
+            List<Long> collectDel = ids.stream().filter(x -> !idsParam.contains(x)).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectDel)){
-                for (TbOrderWarehouseLocationTransfer tbOrderWarehouseLocationTransfer : collectDel) {
-                    tbOrderWarehouseLocationTransferMapper.deleteByPrimaryKey(tbOrderWarehouseLocationTransfer.getId());
+                for (Long id : collectDel) {
+                    tbOrderWarehouseLocationTransferMapper.deleteByPrimaryKey(id);
                 }
             }
             List<TbOrderWarehouseLocationTransfer> collectInsert = orderGeneralPojo.getTbOrderWarehouseLocationTransfers().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
@@ -200,10 +203,11 @@ public class OrderGeneralSupport {
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderShortageMapper.batchUpdate(collect);
             }
-            List<TbOrderShortage> collectDel = collect.stream().filter(x -> !ids.contains(x.getId())).collect(Collectors.toList());
+            List<Long> idsParam=collect.stream().map(TbOrderShortage::getId).collect(Collectors.toList());
+            List<Long> collectDel = ids.stream().filter(x -> !idsParam.contains(x)).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectDel)){
-                for (TbOrderShortage tbOrderShortage : collectDel) {
-                    tbOrderShortageMapper.deleteByPrimaryKey(tbOrderShortage.getId());
+                for (Long id : collectDel) {
+                    tbOrderShortageMapper.deleteByPrimaryKey(id);
                 }
             }
             List<TbOrderShortage> collectInsert = orderGeneralPojo.getTbOrderShortages().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
