@@ -88,14 +88,24 @@ public class OrderGeneralSupport {
         }
         //根据com.yc.demo.commom.enums.DefTypeEnum 判断走哪张表update
         if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_1.getCode())){
+            TbOrderProductionSuppleExample example=new TbOrderProductionSuppleExample();
+            example.createCriteria().andGroupUuidEqualTo(orderGeneralPojo.getGroupUuid());
+            List<TbOrderProductionSupple> tbOrderProductionSupples = tbOrderProductionSuppleMapper.selectByExample(example);
+            List<Long> ids = tbOrderProductionSupples.stream().map(TbOrderProductionSupple::getId).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(orderGeneralPojo.getTbOrderProductionSupples())){
                 return;
             }
             List<TbOrderProductionSupple> collect = orderGeneralPojo.getTbOrderProductionSupples().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
-            List<TbOrderProductionSupple> collectInsert = orderGeneralPojo.getTbOrderProductionSupples().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderProductionSuppleMapper.batchUpdate(collect);
             }
+            List<TbOrderProductionSupple> collectDel =collect.stream().filter(x->!ids.contains(x.getId())).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectDel)){
+                for (TbOrderProductionSupple tbOrderProductionSupple : collectDel) {
+                    tbOrderProductionSuppleMapper.deleteByPrimaryKey(tbOrderProductionSupple.getId());
+                }
+            }
+            List<TbOrderProductionSupple> collectInsert = orderGeneralPojo.getTbOrderProductionSupples().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectInsert)){
                 collectInsert.forEach(x->x.setGroupUuid(orderGeneralPojo.getGroupUuid()));
                 tbOrderProductionSuppleMapper.batchInsert(collectInsert);
@@ -103,15 +113,24 @@ public class OrderGeneralSupport {
             return;
         }
         if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_2.getCode())){
+            TbOrderExchangeExample example=new TbOrderExchangeExample();
+            example.createCriteria().andGroupUuidEqualTo(orderGeneralPojo.getGroupUuid());
+            List<TbOrderExchange> tbOrderExchanges = tbOrderExchangeMapper.selectByExample(example);
+            List<Long> ids = tbOrderExchanges.stream().map(TbOrderExchange::getId).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(orderGeneralPojo.getTbOrderExchanges())){
                 return;
             }
             List<TbOrderExchange> collect = orderGeneralPojo.getTbOrderExchanges().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
-            List<TbOrderExchange> collectInsert = orderGeneralPojo.getTbOrderExchanges().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
-
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderExchangeMapper.batchUpdate(collect);
             }
+            List<TbOrderExchange> collectDel =collect.stream().filter(x->!ids.contains(x.getId())).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectDel)){
+                for (TbOrderExchange tbOrderExchange : collectDel) {
+                    tbOrderExchangeMapper.deleteByPrimaryKey(tbOrderExchange.getId());
+                }
+            }
+            List<TbOrderExchange> collectInsert = orderGeneralPojo.getTbOrderExchanges().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectInsert)){
                 collectInsert.forEach(x->x.setGroupUuid(orderGeneralPojo.getGroupUuid()));
                 tbOrderExchangeMapper.batchInsert(collectInsert);
@@ -119,15 +138,25 @@ public class OrderGeneralSupport {
             return;
         }
         if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_3.getCode())){
+            TbOrderWarehousingExample example=new TbOrderWarehousingExample();
+            example.createCriteria().andGroupUuidEqualTo(orderGeneralPojo.getGroupUuid());
+            List<TbOrderWarehousing> tbOrderWarehousings = tbOrderWarehousingMapper.selectByExample(example);
+            List<Long> ids = tbOrderWarehousings.stream().map(TbOrderWarehousing::getId).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(orderGeneralPojo.getTbOrderWarehousings())){
                 return;
             }
             List<TbOrderWarehousing> collect = orderGeneralPojo.getTbOrderWarehousings().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
-            List<TbOrderWarehousing> collectInsert = orderGeneralPojo.getTbOrderWarehousings().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
 
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderWarehousingMapper.batchUpdate(collect);
             }
+            List<TbOrderWarehousing> collectDel = collect.stream().filter(x -> !ids.contains(x.getId())).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectDel)){
+                for (TbOrderWarehousing tbOrderWarehousing : collectDel) {
+                    tbOrderWarehousingMapper.deleteByPrimaryKey(tbOrderWarehousing.getId());
+                }
+            }
+            List<TbOrderWarehousing> collectInsert = orderGeneralPojo.getTbOrderWarehousings().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectInsert)){
                 collectInsert.forEach(x->x.setGroupUuid(orderGeneralPojo.getGroupUuid()));
                 tbOrderWarehousingMapper.batchInsert(collectInsert);
@@ -135,14 +164,24 @@ public class OrderGeneralSupport {
             return;
         }
         if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_4.getCode())){
+            TbOrderWarehouseLocationTransferExample example=new TbOrderWarehouseLocationTransferExample();
+            example.createCriteria().andGroupUuidEqualTo(orderGeneralPojo.getGroupUuid());
+            List<TbOrderWarehouseLocationTransfer> tbOrderWarehouseLocationTransfers = tbOrderWarehouseLocationTransferMapper.selectByExample(example);
+            List<Long> ids = tbOrderWarehouseLocationTransfers.stream().map(TbOrderWarehouseLocationTransfer::getId).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(orderGeneralPojo.getTbOrderWarehouseLocationTransfers())){
                 return;
             }
             List<TbOrderWarehouseLocationTransfer> collect = orderGeneralPojo.getTbOrderWarehouseLocationTransfers().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
-            List<TbOrderWarehouseLocationTransfer> collectInsert = orderGeneralPojo.getTbOrderWarehouseLocationTransfers().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderWarehouseLocationTransferMapper.batchUpdate(collect);
             }
+            List<TbOrderWarehouseLocationTransfer> collectDel = collect.stream().filter(x -> !ids.contains(x.getId())).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectDel)){
+                for (TbOrderWarehouseLocationTransfer tbOrderWarehouseLocationTransfer : collectDel) {
+                    tbOrderWarehouseLocationTransferMapper.deleteByPrimaryKey(tbOrderWarehouseLocationTransfer.getId());
+                }
+            }
+            List<TbOrderWarehouseLocationTransfer> collectInsert = orderGeneralPojo.getTbOrderWarehouseLocationTransfers().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectInsert)){
                 collectInsert.forEach(x->x.setGroupUuid(orderGeneralPojo.getGroupUuid()));
                 tbOrderWarehouseLocationTransferMapper.batchInsert(collectInsert);
@@ -150,14 +189,24 @@ public class OrderGeneralSupport {
             return;
         }
         if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_5.getCode())){
+            TbOrderShortageExample example=new TbOrderShortageExample();
+            example.createCriteria().andGroupUuidEqualTo(orderGeneralPojo.getGroupUuid());
+            List<TbOrderShortage> tbOrderShortages = tbOrderShortageMapper.selectByExample(example);
+            List<Long> ids = tbOrderShortages.stream().map(TbOrderShortage::getId).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(orderGeneralPojo.getTbOrderShortages())){
                 return;
             }
             List<TbOrderShortage> collect = orderGeneralPojo.getTbOrderShortages().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
-            List<TbOrderShortage> collectInsert = orderGeneralPojo.getTbOrderShortages().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collect)){
                 tbOrderShortageMapper.batchUpdate(collect);
             }
+            List<TbOrderShortage> collectDel = collect.stream().filter(x -> !ids.contains(x.getId())).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectDel)){
+                for (TbOrderShortage tbOrderShortage : collectDel) {
+                    tbOrderShortageMapper.deleteByPrimaryKey(tbOrderShortage.getId());
+                }
+            }
+            List<TbOrderShortage> collectInsert = orderGeneralPojo.getTbOrderShortages().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
             if(!CollectionUtils.isEmpty(collectInsert)){
                 collectInsert.forEach(x->x.setGroupUuid(orderGeneralPojo.getGroupUuid()));
                 tbOrderShortageMapper.batchInsert(collectInsert);
