@@ -18,4 +18,5 @@ public class TbOrderGeneralSelectPage extends TbOrderGeneral {
     private Date createTimeStart;
     private Date createTimeEnd;
     private TbUserEx user;
+    private Boolean allDateFlag;
 }

@@ -351,13 +351,22 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
             criteria.andCreateTimeBetween(tbOrderGeneralSelectPage.getCreateTimeStart(),tbOrderGeneralSelectPage.getCreateTimeEnd());
         }
         if(tbOrderGeneralSelectPage.getUser()!=null){
-            example.setOrderByClause("CASE now_user_code\n" +
-                    "      WHEN "+tbOrderGeneralSelectPage.getUser().getUserCode()+" THEN 1\n" +
-                    "      WHEN '' THEN 2\n" +
-                    "      ELSE 3\n" +
-                    "      END\n" +
-                    "asc\n" +
-                    ",id desc");
+            if(tbOrderGeneralSelectPage.getAllDateFlag()!=null&&tbOrderGeneralSelectPage.getAllDateFlag()){
+                example.setOrderByClause("id desc");
+            }else {
+                if(CollectionUtils.isEmpty(tbOrderGeneralSelectPage.getUser().getAclList())){
+                    return null;
+                }
+                criteria.andNowAclCodeIn(tbOrderGeneralSelectPage.getUser().getAclList().stream().map(TbAcl::getAclCode).collect(Collectors.toList()));
+                example.setOrderByClause("CASE now_user_code\n" +
+                        "      WHEN "+tbOrderGeneralSelectPage.getUser().getUserCode()+" THEN 1\n" +
+                        "      WHEN '' THEN 2\n" +
+                        "      ELSE 3\n" +
+                        "      END\n" +
+                        "asc\n" +
+                        ",id desc");
+            }
+
         }
 
         PageHelper.startPage(tbOrderGeneralSelectPage.getOffset(), tbOrderGeneralSelectPage.getLimit());
