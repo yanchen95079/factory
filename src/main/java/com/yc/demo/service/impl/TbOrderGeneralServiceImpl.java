@@ -332,6 +332,9 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         //查找所有单子 按照当前人为自己的排在前面 然后是当前人为空的 然后是时间
         TbOrderGeneralExample example=new TbOrderGeneralExample();
         TbOrderGeneralExample.Criteria criteria = example.createCriteria();
+        if(tbOrderGeneralSelectPage.getDefType()!=null){
+            criteria.andDefTypeEqualTo(tbOrderGeneralSelectPage.getDefType());
+        }
         if(tbOrderGeneralSelectPage.getState()!=null){
             criteria.andStateEqualTo(tbOrderGeneralSelectPage.getState());
         }
