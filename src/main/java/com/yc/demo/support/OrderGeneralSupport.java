@@ -33,6 +33,8 @@ public class OrderGeneralSupport {
     @Autowired
     private TbOrderWarehouseLocationTransferMapper tbOrderWarehouseLocationTransferMapper;
     @Autowired
+    private TbOrderWarehouseLocationTransferNcmMapper tbOrderWarehouseLocationTransferNcmMapper;
+    @Autowired
     private TbOrderWarehousingMapper tbOrderWarehousingMapper;
     @Autowired
     private TbStatusFlowRecordService tbStatusFlowRecordService;
@@ -71,6 +73,12 @@ public class OrderGeneralSupport {
                 tbOrderShortage.setGroupUuid(orderGeneralPojo.getGroupUuid());
             }
             tbOrderShortageMapper.batchInsert(orderGeneralPojo.getTbOrderShortages());
+        }
+        if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_6.getCode())){
+            for (TbOrderWarehouseLocationTransferNcm tbOrderWarehouseLocationTransferNcm : orderGeneralPojo.getTbOrderWarehouseLocationTransferNcms()) {
+                tbOrderWarehouseLocationTransferNcm.setGroupUuid(orderGeneralPojo.getGroupUuid());
+            }
+            tbOrderWarehouseLocationTransferNcmMapper.batchInsert(orderGeneralPojo.getTbOrderWarehouseLocationTransferNcms());
         }
     }
 
@@ -217,6 +225,33 @@ public class OrderGeneralSupport {
             }
             return;
         }
+
+        if(orderGeneralPojo.getDefType().equals(DefTypeEnum.DEF_TYPE_ENUM_6.getCode())){
+            TbOrderWarehouseLocationTransferNcmExample example=new TbOrderWarehouseLocationTransferNcmExample();
+            example.createCriteria().andGroupUuidEqualTo(orderGeneralPojo.getGroupUuid());
+            List<TbOrderWarehouseLocationTransferNcm> tbOrderWarehouseLocationTransferNcms = tbOrderWarehouseLocationTransferNcmMapper.selectByExample(example);
+            List<Long> ids = tbOrderWarehouseLocationTransferNcms.stream().map(TbOrderWarehouseLocationTransferNcm::getId).collect(Collectors.toList());
+            if(CollectionUtils.isEmpty(orderGeneralPojo.getTbOrderWarehouseLocationTransferNcms())){
+                return;
+            }
+            List<TbOrderWarehouseLocationTransferNcm> collect = orderGeneralPojo.getTbOrderWarehouseLocationTransferNcms().stream().filter(x -> x.getId() != null).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collect)){
+                tbOrderWarehouseLocationTransferNcmMapper.batchUpdate(collect);
+            }
+            List<Long> idsParam=collect.stream().map(TbOrderWarehouseLocationTransferNcm::getId).collect(Collectors.toList());
+            List<Long> collectDel = ids.stream().filter(x -> !idsParam.contains(x)).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectDel)){
+                for (Long id : collectDel) {
+                    tbOrderWarehouseLocationTransferNcmMapper.deleteByPrimaryKey(id);
+                }
+            }
+            List<TbOrderWarehouseLocationTransferNcm> collectInsert = orderGeneralPojo.getTbOrderWarehouseLocationTransferNcms().stream().filter(x -> x.getId() == null).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(collectInsert)){
+                collectInsert.forEach(x->x.setGroupUuid(orderGeneralPojo.getGroupUuid()));
+                tbOrderWarehouseLocationTransferNcmMapper.batchInsert(collectInsert);
+            }
+            return;
+        }
     }
 
 
@@ -249,6 +284,11 @@ public class OrderGeneralSupport {
             TbOrderShortageExample example=new TbOrderShortageExample();
             example.createCriteria().andGroupUuidEqualTo(groupUuid);
             tbOrderShortageMapper.deleteByExample(example);
+        }
+        if(delType.equals(DefTypeEnum.DEF_TYPE_ENUM_6.getCode())){
+            TbOrderWarehouseLocationTransferNcmExample example=new TbOrderWarehouseLocationTransferNcmExample();
+            example.createCriteria().andGroupUuidEqualTo(groupUuid);
+            tbOrderWarehouseLocationTransferNcmMapper.deleteByExample(example);
         }
         //删除工作流的log
         tbStatusFlowRecordService.deleteByUuid(groupUuid);
@@ -283,6 +323,11 @@ public class OrderGeneralSupport {
             TbOrderShortageExample example=new TbOrderShortageExample();
             example.createCriteria().andGroupUuidEqualTo(groupUuid);
             pojo.setTbOrderShortages(tbOrderShortageMapper.selectByExample(example));
+        }
+        if(delType.equals(DefTypeEnum.DEF_TYPE_ENUM_6.getCode())){
+            TbOrderWarehouseLocationTransferNcmExample example=new TbOrderWarehouseLocationTransferNcmExample();
+            example.createCriteria().andGroupUuidEqualTo(groupUuid);
+            pojo.setTbOrderWarehouseLocationTransferNcms(tbOrderWarehouseLocationTransferNcmMapper.selectByExample(example));
         }
         return pojo;
     }

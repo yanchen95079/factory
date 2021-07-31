@@ -6,14 +6,14 @@
     quantity, estimate_time, estimate_quantity,
     actual_time, actual_quantity, remark,
     create_time, update_time, create_user,
-    update_user, enable)
+    update_user, enable,supplier)
     values
     <foreach collection="list" item="item" index="index" separator=",">
       (#{item.groupUuid,jdbcType=VARCHAR}, #{item.orderNo,jdbcType=VARCHAR}, #{item.itemNo,jdbcType=VARCHAR},
       #{item.quantity,jdbcType=INTEGER}, #{item.estimateTime,jdbcType=TIMESTAMP}, #{item.estimateQuantity,jdbcType=INTEGER},
       #{item.actualTime,jdbcType=TIMESTAMP}, #{item.actualQuantity,jdbcType=INTEGER}, #{item.remark,jdbcType=VARCHAR},
       #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createUser,jdbcType=BIGINT},
-      #{item.updateUser,jdbcType=BIGINT}, #{item.enable,jdbcType=INTEGER})
+      #{item.updateUser,jdbcType=BIGINT}, #{item.enable,jdbcType=INTEGER},#{item.supplier,jdbcType=VARCHAR})
     </foreach>
   </insert>
   <update id="batchUpdate" parameterType="java.util.List">
@@ -22,6 +22,9 @@
       update tb_order_shortage
       <trim prefix="set" suffixOverrides=",">
 
+        <if test="record.supplier != null">
+          supplier = #{record.supplier,jdbcType=VARCHAR},
+        </if>
         <if test="record.groupUuid != null">
           group_uuid = #{record.groupUuid,jdbcType=VARCHAR},
         </if>

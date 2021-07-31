@@ -46,7 +46,7 @@
             <!--&lt;!&ndash; mysql 配置 &ndash;&gt;-->
             <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
         <!--</table>-->
-        <table tableName="tb_order_production_supple">
+        <table tableName="tb_order_shortage">
         <!-- mysql 配置 -->
         <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
 

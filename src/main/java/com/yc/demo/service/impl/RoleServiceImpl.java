@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Yanchen
@@ -44,6 +45,12 @@ public class RoleServiceImpl implements RoleService {
     private AclService aclService;
     @Override
     public TbRole insert(TbRole role) {
+        TbRoleEx roleEx=new TbRoleEx();
+        roleEx.setRoleName(role.getRoleName());
+        List<TbRole> select = this.select(roleEx);
+        if(!CollectionUtils.isEmpty(select)){
+            throw new MyException(500,"角色名重复");
+        }
         if(StringUtils.isEmpty(role.getRoleCode())){
             role.setRoleCode("ROLE"+UUID.randomUUID().toString().replaceAll("-",""));
         }
@@ -57,6 +64,15 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void updateById(TbRole role) {
+        TbRoleEx roleEx=new TbRoleEx();
+        roleEx.setRoleName(role.getRoleName());
+        List<TbRole> select = this.select(roleEx);
+        if(!CollectionUtils.isEmpty(select)){
+            List<TbRole> list = select.stream().filter(x -> !x.getId().equals(role.getId())).collect(Collectors.toList());
+            if(!CollectionUtils.isEmpty(list)){
+                throw new MyException(500,"角色名重复");
+            }
+        }
         roleMapper.updateByPrimaryKeySelective(role);
     }
 

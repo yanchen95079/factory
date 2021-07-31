@@ -18,5 +18,6 @@ public class OrderGeneralDetailPojo {
     private List<TbOrderShortage> tbOrderShortages;
     private List<TbOrderWarehouseLocationTransfer> tbOrderWarehouseLocationTransfers;
     private List<TbOrderWarehousing> tbOrderWarehousings;
+    private List<TbOrderWarehouseLocationTransferNcm> tbOrderWarehouseLocationTransferNcms;
     private List<TbStatusFlowRecord> lists;
 }

@@ -13,8 +13,9 @@ public enum DefTypeEnum {
     DEF_TYPE_ENUM_1(1,"补货单"),
     DEF_TYPE_ENUM_2(2,"换货单"),
     DEF_TYPE_ENUM_3(3,"入库单"),
-    DEF_TYPE_ENUM_4(4,"转移单"),
+    DEF_TYPE_ENUM_4(4,"库位转移单"),
     DEF_TYPE_ENUM_5(5,"短缺报告"),
+    DEF_TYPE_ENUM_6(6,"NCM库位转移单"),
     ;
     /**
      *

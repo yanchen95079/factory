@@ -18,6 +18,7 @@ public class OrderGeneralPojo extends TbOrderGeneral {
     private List<TbOrderProductionSupple> tbOrderProductionSupples;
     private List<TbOrderShortage> tbOrderShortages;
     private List<TbOrderWarehouseLocationTransfer> tbOrderWarehouseLocationTransfers;
+    private List<TbOrderWarehouseLocationTransferNcm> tbOrderWarehouseLocationTransferNcms;
     private List<TbOrderWarehousing> tbOrderWarehousings;
     private TbUserEx user;
     /**
