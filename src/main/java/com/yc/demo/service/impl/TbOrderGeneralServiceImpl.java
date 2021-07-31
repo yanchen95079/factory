@@ -3,6 +3,7 @@ package com.yc.demo.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.yc.demo.commom.constants.CommonConstant;
 import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.domain.*;
 import com.yc.demo.domain.ex.OrderGeneralDetailPojo;
@@ -10,10 +11,12 @@ import com.yc.demo.domain.ex.OrderGeneralPojo;
 import com.yc.demo.domain.ex.TbOrderGeneralSelectPage;
 import com.yc.demo.mapper.TbOrderGeneralMapper;
 import com.yc.demo.service.TbDefinitionStateFlowService;
+import com.yc.demo.service.TbMapRelationService;
 import com.yc.demo.service.TbOrderGeneralService;
 import com.yc.demo.service.TbStatusFlowRecordService;
 import com.yc.demo.support.FlowNode;
 import com.yc.demo.support.OrderGeneralSupport;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
  * @author Yanchen
  * date 2021/5/29 20:38
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = Throwable.class)
 public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
@@ -38,7 +42,8 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
     private OrderGeneralSupport orderGeneralSupport;
     @Autowired
     private TbStatusFlowRecordService tbStatusFlowRecordService;
-
+    @Autowired
+    private TbMapRelationService tbMapRelationService;
     @Override
     public void insert(OrderGeneralPojo orderGeneralPojo,boolean next) {
         //查询传入的group_uuid没有自己生成一个
@@ -57,14 +62,12 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         if(CollectionUtils.isEmpty(aclList)){
             throw new MyException(500,"该用户没有任何权限操作");
         }
-        boolean oneAcl = aclList.stream().anyMatch(x -> x.getAclCode().equals(tbDefinitionStateFlows.get(0).getAclCode()));
-        //否就弹错误
-        if(!oneAcl){
-            throw new MyException(500,"该用户没有权限操作");
-        }
         // 是就新建总表OrderGeneral
         orderGeneralPojo.setState(0);
-        FlowNode flowNode = getFlowNode(tbDefinitionStateFlows, tbDefinitionStateFlows.get(0).getAclCode());
+        FlowNode flowNode = getFlowNode(orderGeneralPojo,tbDefinitionStateFlows, null);
+        if(flowNode.getAclCode()==null||!aclList.stream().anyMatch(x -> x.getAclCode().equals(flowNode.getAclCode()))){
+            throw new MyException(500,"该用户没有权限操作");
+        }
         if(next){
             //上一个acl为当前的 当前acl和user为工作流转到的（下一个 下一个user为空） 下一个为下一个的下一个不记录先
             orderGeneralPojo.setBeforeAclCode(flowNode.getAclCode());
@@ -83,13 +86,21 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
             }
 
         }else {
-            //上一个acl空 当前acl和user为当前 下一个先不记录
-            orderGeneralPojo.setBeforeAclCode("");
-            orderGeneralPojo.setBeforeUserCode("");
-            orderGeneralPojo.setNowAclCode(flowNode.getAclCode());
-            orderGeneralPojo.setNowUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
-            orderGeneralPojo.setNextAclCode("");
-            orderGeneralPojo.setNextUserCode("");
+            if(flowNode.getAclCode()==null){
+                orderGeneralPojo.setState(1);
+                orderGeneralPojo.setNowUserCode("");
+                orderGeneralPojo.setNowAclCode("");
+                orderGeneralPojo.setNextUserCode("");
+                orderGeneralPojo.setNextAclCode("");
+            }else {
+                //上一个acl空 当前acl和user为当前 下一个先不记录
+                orderGeneralPojo.setBeforeAclCode("");
+                orderGeneralPojo.setBeforeUserCode("");
+                orderGeneralPojo.setNowAclCode(flowNode.getAclCode());
+                orderGeneralPojo.setNowUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
+                orderGeneralPojo.setNextAclCode("");
+                orderGeneralPojo.setNextUserCode("");
+            }
         }
         //新建对应的子业务的数据
         orderGeneralSupport.insetOrder(orderGeneralPojo);
@@ -118,13 +129,29 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
 
     /**
      * 得到某个权限这个流的当前流node
+     * @param orderGeneralPojo 入参
      * @param tbDefinitionStateFlows
      * @param aclCode
      * @return
      */
-    private FlowNode getFlowNode(List<TbDefinitionStateFlow> tbDefinitionStateFlows, String aclCode) {
-        List<FlowNode> nodeList = FlowNode.getNodeList(tbDefinitionStateFlows, true);
+    private FlowNode getFlowNode(OrderGeneralPojo orderGeneralPojo,List<TbDefinitionStateFlow> tbDefinitionStateFlows, String aclCode) {
+        //找到这个单子所有特殊的配置
+        Map<String,String> mapParam=new HashMap<>(2);
+        mapParam.put(CommonConstant.FLOW_TYPE,String.valueOf(orderGeneralPojo.getDefType()));
+        List<Map> sourceProjectRelationList =new ArrayList<>();
+        try {
+            sourceProjectRelationList = tbMapRelationService.getMapRelation(CommonConstant.STATE_FLOW_RULE, mapParam,null,null, Map.class);
+        } catch (Exception e) {
+            log.error("TbOrderGeneralServiceImpl getMapRelation error");
+        }
+        List<FlowNode> nodeList = FlowNode.getNodeList(sourceProjectRelationList,orderGeneralPojo,tbDefinitionStateFlows, true);
+        if(aclCode==null){
+            return nodeList.get(0);
+        }
         List<FlowNode> collect = nodeList.stream().filter(x -> x.getAclCode().equals(aclCode)).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(collect)){
+            return new FlowNode();
+        }
         return collect.get(0);
     }
 
@@ -162,7 +189,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         TbDefinitionStateFlow flow=new TbDefinitionStateFlow();
         flow.setDefType(tbOrderGeneralOld.getDefType());
         List<TbDefinitionStateFlow> tbDefinitionStateFlows = tbDefinitionStateFlowService.selectOrderByPosition(flow);
-        FlowNode flowNode = getFlowNode(tbDefinitionStateFlows, tbOrderGeneralOld.getNowAclCode());
+        FlowNode flowNode = getFlowNode(orderGeneralPojo,tbDefinitionStateFlows, tbOrderGeneralOld.getNowAclCode());
         //上一个acl为当前的 当前acl和user为工作流转到的（下一个 下一个user为空） 下一个为下一个的下一个 如果到了尾部 需要修改general表为完成
         orderGeneralPojo.setBeforeAclCode(flowNode.getAclCode());
         orderGeneralPojo.setBeforeUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
@@ -212,7 +239,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         TbDefinitionStateFlow flow=new TbDefinitionStateFlow();
         flow.setDefType(tbOrderGeneralOld.getDefType());
         List<TbDefinitionStateFlow> tbDefinitionStateFlows = tbDefinitionStateFlowService.selectOrderByPosition(flow);
-        FlowNode flowNode = getFlowNode(tbDefinitionStateFlows, tbOrderGeneralOld.getNowAclCode());
+        FlowNode flowNode = getFlowNode(orderGeneralPojo,tbDefinitionStateFlows, tbOrderGeneralOld.getNowAclCode());
         //上一个acl为上一个的上一个 当前acl和user为工作流转到的（上一个 user赋值空按照角色划分） 下一个为当前这个
         if(flowNode.getPrex()==null){
             throw new MyException(500,"没有上一步工作流");

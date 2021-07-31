@@ -1,14 +1,24 @@
 package com.yc.demo.support;
 
+import com.alibaba.fastjson.JSON;
+import com.yc.demo.commom.constants.CommonConstant;
+import com.yc.demo.commom.utils.groovy.GroovyUtil;
 import com.yc.demo.domain.TbDefinitionStateFlow;
+import com.yc.demo.domain.ex.OrderGeneralPojo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Yanchen
@@ -31,11 +41,30 @@ public class FlowNode {
      * 链表组装大客户
      * @param flag 是否正序
      * @param nodeList 总的大的node
+     * @param sourceProjectRelationList 特殊配置
+     * @param orderGeneralPojo 方法入参
      * @return List<DetailPayNode>
      */
-    public static List<FlowNode> getNodeList(List<TbDefinitionStateFlow> nodeList, boolean flag){
+    public static List<FlowNode> getNodeList(List<Map> sourceProjectRelationList, OrderGeneralPojo orderGeneralPojo, List<TbDefinitionStateFlow> nodeList, boolean flag){
         List<FlowNode> list=new ArrayList<>();
+        Boolean continueFlag=false;
         for (TbDefinitionStateFlow tbDefinitionStateFlow : nodeList) {
+            if(!CollectionUtils.isEmpty(sourceProjectRelationList)){
+                List<Map> ruleList = sourceProjectRelationList.stream().filter(x -> x.get(CommonConstant.FLOW_POSITION).equals(String.valueOf(tbDefinitionStateFlow.getPosition()))).collect(Collectors.toList());
+                if(!CollectionUtils.isEmpty(ruleList)){
+                    for (Map map : ruleList) {
+                        Map<String,Object> mapRule=new HashMap<>();
+                        mapRule.put("orderGeneralPojo",orderGeneralPojo);
+                        Object eval = GroovyUtil.eval(String.valueOf(map.get(CommonConstant.RULE)),mapRule ,Object.class);
+                        if(eval==null|| !Boolean.valueOf(String.valueOf(eval))){
+                            continueFlag=true;
+                        }
+                    }
+                }
+            }
+            if(continueFlag){
+                continue;
+            }
             FlowNode node=new FlowNode();
             node.setAclCode(tbDefinitionStateFlow.getAclCode());
             node.setPosition(tbDefinitionStateFlow.getPosition());

@@ -15,4 +15,8 @@ public class CommonConstant {
     public static String TEST_ITEM_ENUM="testItemEnum";
     public static String CONFIG_KEY="configKey";
     public static String TEST_ITEM_ID="testItemId";
+    public static String STATE_FLOW_RULE="state_flow_rule";
+    public static String FLOW_TYPE="flow_type";
+    public static String RULE="rule";
+    public static String FLOW_POSITION="flow_position";
 }

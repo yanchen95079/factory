@@ -4,6 +4,7 @@ import com.yc.demo.domain.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -23,4 +24,8 @@ public class OrderGeneralPojo extends TbOrderGeneral {
      * 操作人操作  比如 XX签字
      */
     private String workContent;
+    /**
+     *一组单子的总价格,当前只有补货单用
+     */
+    private BigDecimal totalAllCost;
 }
