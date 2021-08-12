@@ -93,7 +93,7 @@ public class ExcelServiceImpl implements ExcelService {
                                 mapRecord.put(String.valueOf(map.get(CommonConstant.EXCEL_CODE1)),tbStatusFlowRecord.getWorkUserName());
                             }
                             if(map.get(CommonConstant.EXCEL_CODE2)!=null){
-                                mapRecord.put(String.valueOf(map.get(CommonConstant.EXCEL_CODE2)),tbStatusFlowRecord.getContent());
+                                mapRecord.put(String.valueOf(map.get(CommonConstant.EXCEL_CODE2)),tbStatusFlowRecord.getContentRemrk());
                             }
                             if(map.get(CommonConstant.EXCEL_CODE3)!=null){
                                 mapRecord.put(String.valueOf(map.get(CommonConstant.EXCEL_CODE3)),DateUtil.date2String(tbStatusFlowRecord.getUpdateTime(),DateUtil.DatePattern.YYYYMMDDHHmmss.getValue()));

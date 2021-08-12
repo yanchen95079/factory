@@ -116,6 +116,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
             record.setUpdateTime(new Date());
             if(i==0){
                 record.setContent(orderGeneralPojo.getWorkContent());
+                record.setContentRemrk(orderGeneralPojo.getWorkContentRemark());
                 record.setWorkUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
                 record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
             }else {
@@ -183,6 +184,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         record.setWorkUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
         record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
         record.setContent(orderGeneralPojo.getWorkContent());
+        record.setContentRemrk(orderGeneralPojo.getWorkContentRemark());
         tbStatusFlowRecordService.updateByGroupIdAndTypeAndAcl(record);
 
         //找到这个权限下所有的工作流流程
@@ -234,6 +236,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         record.setWorkUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
         record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
         record.setContent(orderGeneralPojo.getWorkContent());
+        record.setContentRemrk(orderGeneralPojo.getWorkContentRemark());
         tbStatusFlowRecordService.updateByGroupIdAndTypeAndAcl(record);
         //找到这个权限下所有的工作流流程
         TbDefinitionStateFlow flow=new TbDefinitionStateFlow();
@@ -283,6 +286,7 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
         record.setWorkUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
         record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
         record.setContent(orderGeneralPojo.getWorkContent());
+        record.setContentRemrk(orderGeneralPojo.getWorkContentRemark());
         tbStatusFlowRecordService.updateByGroupIdAndTypeAndAcl(record);
         // update对应的子业务的数据
         orderGeneralSupport.updateOrder(false,orderGeneralPojo);

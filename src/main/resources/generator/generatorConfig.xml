@@ -46,7 +46,7 @@
             <!--&lt;!&ndash; mysql 配置 &ndash;&gt;-->
             <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
         <!--</table>-->
-        <table tableName="tb_order_warehouse_location_transfer_ncm">
+        <table tableName="tb_status_flow_record">
         <!-- mysql 配置 -->
         <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
 

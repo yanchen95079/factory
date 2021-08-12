@@ -26,6 +26,10 @@ public class OrderGeneralPojo extends TbOrderGeneral {
      */
     private String workContent;
     /**
+     * 操作人操作 备注 比如 XX签字
+     */
+    private String workContentRemark;
+    /**
      *一组单子的总价格,当前只有补货单用
      */
     private BigDecimal totalAllCost;
