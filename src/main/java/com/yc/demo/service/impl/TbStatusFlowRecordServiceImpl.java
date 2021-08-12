@@ -2,6 +2,7 @@ package com.yc.demo.service.impl;
 
 import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.domain.TbStatusFlowRecord;
+import com.yc.demo.domain.ex.TbStatusFlowRecordEx;
 import com.yc.demo.domain.TbStatusFlowRecordExample;
 import com.yc.demo.mapper.TbStatusFlowRecordMapper;
 import com.yc.demo.service.TbStatusFlowRecordService;
@@ -54,6 +55,25 @@ public class TbStatusFlowRecordServiceImpl implements TbStatusFlowRecordService 
     public List<TbStatusFlowRecord> select(TbStatusFlowRecord record) {
         TbStatusFlowRecordExample example=new TbStatusFlowRecordExample();
         TbStatusFlowRecordExample.Criteria criteria = example.createCriteria();
+        if(StringUtils.isNotEmpty(record.getAclCode())){
+            criteria.andAclCodeEqualTo(record.getAclCode());
+        }
+        if(StringUtils.isNotEmpty(record.getGroupId())){
+            criteria.andGroupIdEqualTo(record.getGroupId());
+        }
+        if(record.getDefType()!=null){
+            criteria.andDefTypeEqualTo(record.getDefType());
+        }
+        return tbStatusFlowRecordMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<TbStatusFlowRecord> selectEx(TbStatusFlowRecordEx record) {
+        TbStatusFlowRecordExample example=new TbStatusFlowRecordExample();
+        TbStatusFlowRecordExample.Criteria criteria = example.createCriteria();
+        if(!CollectionUtils.isEmpty(record.getGroupUuidList())){
+            criteria.andGroupIdIn(record.getGroupUuidList());
+        }
         if(StringUtils.isNotEmpty(record.getAclCode())){
             criteria.andAclCodeEqualTo(record.getAclCode());
         }

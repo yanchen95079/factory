@@ -2,6 +2,7 @@ package com.yc.demo.service;
 
 import com.github.pagehelper.PageInfo;
 import com.yc.demo.domain.TbOrderGeneral;
+import com.yc.demo.domain.ex.TbOrderGeneralEx;
 import com.yc.demo.domain.ex.OrderGeneralDetailPojo;
 import com.yc.demo.domain.ex.OrderGeneralPojo;
 import com.yc.demo.domain.ex.TbOrderGeneralSelectPage;
@@ -40,4 +41,6 @@ public interface TbOrderGeneralService {
     OrderGeneralDetailPojo selectDetailByGroupUuid(String groupUuid);
 
     List<TbOrderGeneral> select(TbOrderGeneral tbOrderGeneral);
+
+    List<TbOrderGeneral> selectEx(TbOrderGeneralEx tbOrderGeneralEx);
 }

@@ -19,4 +19,12 @@ public class CommonConstant {
     public static String FLOW_TYPE="flow_type";
     public static String RULE="rule";
     public static String FLOW_POSITION="flow_position";
+    public static String MATERIAL_NUMBER_ENUM="material_number_enum";
+    public static String EXCEL_OUT_FLOW_RECORD_CONFIG="excel_out_flow_record_config";
+    public static String DEF_TYPE="defType";
+    public static String ACL_CODE="aclCode";
+    public static String EXCEL_CODE1="excelCode1";
+    public static String EXCEL_CODE2="excelCode2";
+    public static String EXCEL_CODE3="excelCode3";
+    public static String GROUP_UUID="groupUuid";
 }

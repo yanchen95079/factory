@@ -1,6 +1,5 @@
 package com.yc.demo.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yc.demo.commom.constants.CommonConstant;
@@ -8,6 +7,7 @@ import com.yc.demo.commom.exception.MyException;
 import com.yc.demo.domain.*;
 import com.yc.demo.domain.ex.OrderGeneralDetailPojo;
 import com.yc.demo.domain.ex.OrderGeneralPojo;
+import com.yc.demo.domain.ex.TbOrderGeneralEx;
 import com.yc.demo.domain.ex.TbOrderGeneralSelectPage;
 import com.yc.demo.mapper.TbOrderGeneralMapper;
 import com.yc.demo.service.TbDefinitionStateFlowService;
@@ -113,9 +113,9 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
             record.setEnable(1);
             record.setGroupId(orderGeneralPojo.getGroupUuid());
             record.setCreateTime(new Date());
+            record.setUpdateTime(new Date());
             if(i==0){
                 record.setContent(orderGeneralPojo.getWorkContent());
-                record.setUpdateTime(new Date());
                 record.setWorkUserCode(String.valueOf(orderGeneralPojo.getUser().getUserCode()));
                 record.setWorkUserName(orderGeneralPojo.getUser().getUserName());
             }else {
@@ -336,6 +336,31 @@ public class TbOrderGeneralServiceImpl implements TbOrderGeneralService {
     public List<TbOrderGeneral> select(TbOrderGeneral tbOrderGeneral) {
         TbOrderGeneralExample example=new TbOrderGeneralExample();
         TbOrderGeneralExample.Criteria criteria = example.createCriteria();
+        if(tbOrderGeneral.getState()!=null){
+            criteria.andStateEqualTo(tbOrderGeneral.getState());
+        }
+        if(StringUtils.isNotEmpty(tbOrderGeneral.getGroupUuid())){
+            criteria.andGroupUuidEqualTo(tbOrderGeneral.getGroupUuid());
+        }
+        if(StringUtils.isNotEmpty(tbOrderGeneral.getNowUserCode())){
+            criteria.andNowUserCodeEqualTo(tbOrderGeneral.getNowUserCode());
+        }
+        if(StringUtils.isNotEmpty(tbOrderGeneral.getNowAclCode())){
+            criteria.andNowAclCodeEqualTo(tbOrderGeneral.getNowAclCode());
+        }
+        if(tbOrderGeneral.getCreateUser()!=null){
+            criteria.andCreateUserEqualTo(tbOrderGeneral.getCreateUser());
+        }
+        return tbOrderGeneralMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<TbOrderGeneral> selectEx(TbOrderGeneralEx tbOrderGeneral) {
+        TbOrderGeneralExample example=new TbOrderGeneralExample();
+        TbOrderGeneralExample.Criteria criteria = example.createCriteria();
+        if(!CollectionUtils.isEmpty(tbOrderGeneral.getGroupUuidList())){
+            criteria.andGroupUuidIn(tbOrderGeneral.getGroupUuidList());
+        }
         if(tbOrderGeneral.getState()!=null){
             criteria.andStateEqualTo(tbOrderGeneral.getState());
         }

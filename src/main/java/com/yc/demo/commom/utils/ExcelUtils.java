@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -123,4 +125,28 @@ public class ExcelUtils {
         }
         return list;
     }
+
+    public static Object mapTObject(Map<String, Object> map,Class<?> clazz){
+        if(map == null){
+            return null;
+        }
+        Object obj = null;
+        try {
+            obj = clazz.newInstance();
+            Field[] fields = obj.getClass().getDeclaredFields();
+            Field[] supFields = obj.getClass().getSuperclass().getDeclaredFields();
+            for(Field field : fields){
+                int mod = field.getModifiers();
+                if(Modifier.isStatic(mod) || Modifier.isFinal(mod)){
+                    continue;
+                }
+                field.setAccessible(true);
+                field.set(obj, map.get(field.getName()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
 }
